@@ -4,8 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Christine Jeong | Sori.ai</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #faf6ec;
+            --bg-soft: #f4efe2;
+            --surface: #fffdf6;
+            --surface-2: #f4efe2;
+            --text: #1e2a80;
+            --muted: #5560bd;
+            --line: rgba(43,60,196,0.16);
+            --c1: #2b3cc4;
+            --c2: #2b3cc4;
+            --c3: #2b3cc4;
+            --accent: #2b3cc4;
+            --grad: linear-gradient(120deg, #2b3cc4 0%, #3d4fd8 100%);
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
+        }
         /* Unified CSS for all project pages */
         * {
             margin: 0;
@@ -22,79 +39,85 @@
 
         body {
             font-family: 'Satoshi', sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: var(--bg);
+            color: var(--text);
             overflow-x: hidden;
             scroll-behavior: smooth;
             padding-top: 80px; /* Account for fixed navbar */
         }
 
-        /* Unified Navigation */
+        /* Unified Navigation (matches home page) */
         #navbar {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
             display: flex;
-            justify-content: center;
-            padding: 30px 0;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 44px;
             z-index: 1000;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            height: 80px;
+            height: 72px;
+            background: rgba(250, 246, 236, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
         }
+        .nav-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            display: flex; align-items: center; gap: 9px;
+        }
+        .nav-logo .mark {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+        @keyframes pulse { 0%,100%{ transform: scale(1); opacity:1 } 50%{ transform: scale(1.35); opacity:.7 } }
 
         #top-menu {
             display: flex;
             list-style: none;
-            gap: 40px;
+            gap: 34px;
+            align-items: center;
         }
-
-        #navbar a {
-            text-decoration: none;
-            color: #fff;
-            font-size: 16px;
+        #navbar a { text-decoration: none; }
+        #navbar a.nav-link {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
             font-weight: 500;
-            transition: all 0.3s ease;
+            color: var(--muted);
             position: relative;
-            padding: 8px 0;
+            padding: 6px 0;
+            transition: color 0.3s ease;
         }
-
-        #navbar a:hover {
-            color: #ffcc00;
-        }
-
-        #navbar a#selected-nav {
-            color: #ffcc00;
-        }
-
-        #navbar a#selected-nav::after {
+        #navbar a.nav-link::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #ffcc00;
-            transform: scaleX(1);
-        }
-
-        #navbar a:not(#selected-nav)::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #ffcc00;
+            bottom: 0; left: 0;
+            width: 100%; height: 2px;
+            background: var(--accent);
             transform: scaleX(0);
-            transition: transform 0.3s ease;
+            transform-origin: left;
+            transition: transform 0.35s var(--ease);
         }
+        #navbar a.nav-link:hover, #navbar a.nav-link.active { color: var(--text); }
+        #navbar a.nav-link:hover::after, #navbar a.nav-link.active::after { transform: scaleX(1); }
 
-        #navbar a:not(#selected-nav):hover::after {
-            transform: scaleX(1);
+        .nav-cta {
+            font-family: var(--font-body);
+            padding: 9px 18px;
+            border-radius: 100px;
+            background: var(--accent);
+            color: #faf6ec !important;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 6px 22px rgba(43, 60, 196, 0.25);
+            transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
         }
+        .nav-cta::after { display: none; }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(43, 60, 196, 0.4); }
 
         /* Project Header */
         .project-header {
@@ -105,16 +128,17 @@
         }
 
         .project-title {
+            font-family: var(--font-display);
             font-size: 3.5rem;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #fff;
+            color: var(--text);
             line-height: 1.1;
         }
 
         .project-subtitle {
             font-size: 1.5rem;
-            color: #ffcc00;
+            color: var(--accent);
             font-weight: 400;
             max-width: 700px;
             margin: 0 auto;
@@ -128,7 +152,7 @@
             margin: 0 auto 60px;
             display: block;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(43, 60, 196, 0.15);
         }
 
         /* Project Details Grid */
@@ -142,7 +166,7 @@
         }
 
         .detail-card {
-            background: #111;
+            background: var(--surface);
             border-radius: 8px;
             padding: 25px;
             text-align: center;
@@ -157,13 +181,13 @@
             font-size: 1.1rem;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #ffcc00;
+            color: var(--accent);
         }
 
         .detail-content {
             font-size: 1rem;
             line-height: 1.5;
-            color: #ccc;
+            color: var(--muted);
         }
 
         /* Project Content Sections */
@@ -178,24 +202,25 @@
         }
 
         .section-title {
+            font-family: var(--font-display);
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 25px;
-            color: #fff;
+            color: var(--text);
             padding-bottom: 10px;
-            border-bottom: 2px solid #ffcc00;
+            border-bottom: 2px solid var(--c2);
             display: inline-block;
         }
 
         .section-text {
             font-size: 1.1rem;
             line-height: 1.7;
-            color: #ccc;
+            color: var(--muted);
             margin-bottom: 20px;
         }
 
         .section-text strong {
-            color: #ffcc00;
+            color: var(--accent);
         }
 
         .section-list {
@@ -220,7 +245,7 @@
         .gallery-image {
             max-width: 100%;
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(43, 60, 196, 0.12);
             transition: transform 0.3s ease;
         }
 
@@ -230,6 +255,12 @@
 
         .gallery-image.small {
             max-width: 300px;
+        }
+
+        /* screen recordings: crop out the baked-in phone frame, show just the screen */
+        .phone-rec {
+            width: min(280px, 72vw);
+            clip-path: inset(var(--crop-y, 3.4%) var(--crop-x, 6.4%) round 22px);
         }
 
         /* Video Styling */
@@ -246,18 +277,19 @@
         .back-link {
             display: inline-block;
             margin-top: 40px;
-            color: #ffcc00;
+            color: var(--accent);
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
             padding: 10px 20px;
-            border: 1px solid #ffcc00;
+            border: 1px solid var(--c2);
             border-radius: 4px;
         }
 
         .back-link:hover {
-            background: #ffcc00;
-            color: #000;
+            background: var(--grad);
+            color: #faf6ec;
+            border-color: transparent;
         }
 
         /* Responsive adjustments */
@@ -296,9 +328,8 @@
                 gap: 20px;
             }
             
-            #navbar a {
-                font-size: 14px;
-            }
+            #navbar { padding: 14px 20px; }
+            .nav-link { font-size: 14px; }
             
             .section-title {
                 font-size: 1.5rem;
@@ -312,14 +343,14 @@
 </head>
 <body>
     <!-- Navigation -->
-    <div id="navbar">
+    <nav id="navbar">
+        <a class="nav-logo" href="portfolio.html"><span class="mark">✳</span><span class="full">Christine&nbsp;Jeong</span></a>
         <ul id="top-menu">
-            <li><a href="portfolio.html">Home</a></li>
-            <li><a href="portfolio.html#about-section">About</a></li>
-            <li><a id="selected-nav" href="portfolio.html#design-section">Design</a></li>
-            <li><a href="portfolio.html#coding-section">Coding</a></li>
+            <li><a class="nav-link" href="portfolio.html#about">About</a></li>
+            <li><a class="nav-link active" href="portfolio.html#projects">Projects</a></li>
+            <li><a class="nav-cta" href="mailto:jeongc@usc.edu">Let's talk</a></li>
         </ul>
-    </div>
+    </nav>
 
     <!-- Project Header -->
     <section class="project-header">
@@ -476,7 +507,7 @@
             
             <p class="section-text"><strong>1. Onboard Flow</strong></p>
             <div class="image-gallery">
-                <img src="Sori/Sori_Onboard.gif" alt="Onboard Flow" class="gallery-image">
+                <img src="Sori/Sori_Onboard.gif" alt="Onboard Flow" class="gallery-image phone-rec">
             </div>
             
             <p class="section-text"><strong>2. Real-Time Voice Analysis</strong></p>
@@ -504,7 +535,7 @@
         </div>
 
         <!-- Back to Projects Link -->
-        <a href="portfolio.html#design-section" class="back-link">← Back to Design Projects</a>
+        <a href="portfolio.html#projects" class="back-link">← Back to all projects</a>
     </div>
 
     <script>
