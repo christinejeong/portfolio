@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christine Jeong | Subly</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>Christine Jeong | Tastemark</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #faf6ec;
@@ -259,8 +259,6 @@
 
         /* screen recordings: crop out the baked-in phone frame, show just the screen */
         .phone-rec {
-            --crop-x: 13.4%;
-            --crop-y: 7%;
             width: min(280px, 72vw);
             clip-path: inset(var(--crop-y, 3.4%) var(--crop-x, 6.4%) round 22px);
         }
@@ -341,191 +339,155 @@
                 font-size: 1rem;
             }
         }
+
+        /* Tastemark tool bar */
+        .tm-logo {
+            font-family: var(--font-display);
+            font-weight: 700; font-size: 1.05rem;
+            color: var(--text); text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tm-logo .mk { color: var(--accent); font-size: 1.15rem; }
+        .tm-logo small { font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: .6rem; color: var(--muted); letter-spacing: .08em; margin-left: 6px; }
+        .tm-actions { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; }
+        .tm-btn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .64rem; letter-spacing: .07em;
+            padding: 8px 14px; border-radius: 100px;
+            border: 1.5px solid rgba(43, 60, 196, .3);
+            color: var(--accent); text-decoration: none;
+            background: transparent; white-space: nowrap;
+            transition: all .25s ease;
+        }
+        .tm-btn:hover { border-color: var(--accent); }
+        .tm-btn.solid { background: var(--accent); border-color: var(--accent); color: #faf6ec; }
+        .tm-btn.solid:hover { opacity: .88; }
+        @media (max-width: 560px) { .tm-btn { font-size: .56rem; padding: 7px 10px; } .tm-logo small { display: none; } }
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav id="navbar">
-        <a class="nav-logo" href="portfolio.html"><span class="mark">✳</span><span class="full">Christine&nbsp;Jeong</span></a>
-        <ul id="top-menu">
-            <li><a class="nav-link" href="portfolio.html#about">About</a></li>
-            <li><a class="nav-link active" href="portfolio.html#projects">Projects</a></li>
-            <li><a class="nav-cta" href="mailto:yunseojeong0607@gmail.com">Let's talk</a></li>
-        </ul>
+        <a class="tm-logo" href="tastemark.html"><span class="mk">✦</span>Tastemark<small>v0.1 MVP</small></a>
+        <div class="tm-actions">
+            <a class="tm-btn solid" href="tastemark.html">← BACK TO DEMO</a>
+            <a class="tm-btn" href="portfolio.html#projects">CHRISTINE'S PORTFOLIO</a>
+        </div>
     </nav>
 
     <!-- Project Header -->
     <section class="project-header">
-        <h1 class="project-title">Subly</h1>
-        <p class="project-subtitle">A safe, efficient subleasing platform tailored for college students</p>
+        <h1 class="project-title">Tastemark</h1>
+        <p class="project-subtitle">Version control for design decisions — a tool that turns curation and rationale into a shareable portfolio artifact</p>
     </section>
 
-    <!-- Project Cover Image -->
-    <img src="Subly/Title page.png" alt="Subly Cover" class="project-cover">
+    <!-- Project Cover -->
+    <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Crect width='640' height='400' fill='%23f7f4ea'/%3E%3Cg fill='none' stroke='%232b3cc4' stroke-width='2'%3E%3Cpath d='M150 200 C 200 200 210 110 260 110 M150 200 C 200 200 210 200 260 200 M150 200 C 200 200 210 290 260 290' opacity='.35'/%3E%3Cpath d='M340 200 C 390 200 400 120 450 120 M340 200 C 390 200 400 200 450 200 M340 200 C 390 200 400 280 450 280' opacity='.35'/%3E%3C/g%3E%3Cg%3E%3Crect x='70' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='260' y='80' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='260' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='260' y='260' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='450' y='90' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='450' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='450' y='250' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3C/g%3E%3Cg fill='%232b3cc4'%3E%3Ccircle cx='90' cy='190' r='6'/%3E%3Ccircle cx='280' cy='190' r='6'/%3E%3Ccircle cx='470' cy='190' r='6'/%3E%3Ccircle cx='280' cy='100' r='6' opacity='.4'/%3E%3Ccircle cx='470' cy='110' r='6' opacity='.4'/%3E%3C/g%3E%3Ctext x='70' y='362' font-family='monospace' font-size='17' fill='%232b3cc4' letter-spacing='3'%3E%E2%9C%A6 EVERY FORK. EVERY KILL. EVERY REASON.%3C/text%3E%3C/svg%3E" alt="Tastemark decision tree" class="project-cover">
 
     <!-- Project Details -->
     <div class="project-details">
         <div class="detail-card">
             <div class="detail-title">Timeline</div>
-            <div class="detail-content">October 2024 - December 2024</div>
+            <div class="detail-content">July 2026</div>
         </div>
         <div class="detail-card">
-            <div class="detail-title">Team (5)</div>
-            <div class="detail-content">
-                Christine Jeong<br>
-                Brandon Wong<br>
-                Jennifer Yoon<br>
-                Mikey McCarthy<br>
-                Sam Mui Tsan
-            </div>
+            <div class="detail-title">Team (1)</div>
+            <div class="detail-content">Christine Jeong<br>(Design Engineer — concept, design &amp; build)</div>
         </div>
         <div class="detail-card">
             <div class="detail-title">Tools</div>
-            <div class="detail-content">Figma</div>
+            <div class="detail-content">JavaScript · HTML/CSS<br>SVG · Claude API</div>
         </div>
         <div class="detail-card">
             <div class="detail-title">Skills</div>
-            <div class="detail-content">
-                UX Research<br>
-                UI/UX Design<br>
-                Prototyping<br>
-                Branding
-            </div>
+            <div class="detail-content">Product Thinking<br>Interaction Design<br>Generative UI<br>Front-End Engineering</div>
         </div>
     </div>
 
     <!-- Project Content -->
     <div class="project-content">
-        <!-- Overview Section -->
         <div class="content-section">
             <h2 class="section-title">Overview</h2>
             <p class="section-text">
-                Subly is an intuitive subleasing platform tailored to the unique needs of college students, providing a safe, efficient, and streamlined process for subleasing and subletting apartments.
+                <strong>Tastemark</strong> is a working web tool built on one belief: in the AI era, generating design is cheap — <strong>choosing well, and knowing why, is the job</strong>.
+                AI produces the variants; the designer curates. Tastemark records every fork, every rejection, and every stated reason, then turns the whole session into a shareable decision artifact.
             </p>
             <p class="section-text">
-                The platform allows users to post, find, and manage listings all in one place, making it simple to connect with trusted peers seeking or offering short-term housing. The platform also promotes trust through its user-friendly interface and clearly displayed recommended listings. Designed with student-centric features, Subly offers a smooth, reliable experience that transforms the traditionally complex process of subleasing into a quick, secure, and accessible solution for students across a wide range of universities.
+                The pitch in one line: <strong>“GitHub commit history, but for design decisions.”</strong> Code has version control that proves how a developer thinks. Design has only final artifacts — the thinking is invisible. Tastemark makes it visible, recordable, and shareable.
             </p>
         </div>
 
-        <!-- Background Section -->
         <div class="content-section">
             <h2 class="section-title">Background</h2>
             <p class="section-text">
-                Finding housing as a student shouldn't feel like a gamble. Yet for many, it does.
+                Designers are watching AI generate in seconds what used to take a week — and portfolios full of polished finals no longer prove much, because a model can produce polished finals too.
             </p>
             <p class="section-text">
-                During our early conversations with peers, one theme kept coming up: the subleasing process feels sketchy, unreliable, and unnecessarily stressful. From fake listings to endless Facebook group posts, students were piecing together housing options through word-of-mouth and scattered online platforms.
-            </p>
-            <p class="section-text">
-                Subly was created to rethink that process, making subleasing safe, student-focused, and stress-free.
+                But hiring hasn't changed what it actually tests: <strong>can you defend a decision?</strong> Interviews probe the “why” behind every screen. The skill that survives AI is judgment — taste with reasons attached. Nothing in a designer's toolkit captures that skill as evidence.
             </p>
         </div>
 
-        <!-- User Persona Image -->
-        <div class="content-section">
-            <div class="image-gallery">
-                <img src="Subly/User Persona.png" alt="User Persona" class="gallery-image">
-            </div>
-        </div>
-
-        <!-- Problem Section -->
         <div class="content-section">
             <h2 class="section-title">The Problem</h2>
             <p class="section-text">
-                How might we design a subleasing experience that feels trustworthy, straightforward, and tailored to student needs from start to finish?
-            </p>
-            <p class="section-text">
-                Key challenges:
+                How might we make design judgment — not just design output — visible and provable?
             </p>
             <ul class="section-list">
-                <li>Verification gaps → Students struggled to know which listings (or subleasers) to trust.</li>
-                <li>Overwhelming searches → Hours wasted scrolling through cluttered, unfiltered housing boards.</li>
-                <li>Unclear process → Unorganized steps and unclear communication added to stress.</li>
+                <li><strong>Invisible thinking</strong> → the reasoning behind a design exists only in the designer's head, or in a meeting that wasn't recorded.</li>
+                <li><strong>Winner-only portfolios</strong> → finals show what was chosen, never what was killed or why — which is where the judgment actually lives.</li>
+                <li><strong>Unstructured critique</strong> → “I just like this one better” is where taste goes to die; without a forcing function, rationale never gets written down.</li>
             </ul>
         </div>
 
-        <!-- Research Section -->
-        <div class="content-section">
-            <h2 class="section-title">Research</h2>
-            <p class="section-text">
-                To understand where the biggest frustrations occurred, I conducted user research through interviews and surveys.
-            </p>
-            <p class="section-text">
-                Key insights:
-            </p>
-            <ul class="section-list">
-                <li>Students preferred platforms with peer-to-peer credibility. Trust was higher when the source was another student.</li>
-                <li>Filtering tools were often inadequate, forcing students to spend unnecessary time browsing irrelevant listings.</li>
-                <li>The process felt mentally draining, leaving students anxious even after securing housing.</li>
-            </ul>
-        </div>
-
-        <!-- Empathy Map Image -->
-        <div class="content-section">
-            <div class="image-gallery">
-                <img src="Subly/Empathy Map.png" alt="Empathy Map" class="gallery-image">
-            </div>
-        </div>
-
-        <!-- Solution Section -->
         <div class="content-section">
             <h2 class="section-title">The Solution</h2>
             <p class="section-text">
-                We designed Subly as a student-only housing app that simplifies the subleasing journey through trust-building features and streamlined flows.
-            </p>
-            <p class="section-text">
-                <strong>1. Verified student community</strong>
+                A curation loop with a rule: <strong>you cannot advance without stating why.</strong>
             </p>
             <ul class="section-list">
-                <li>.edu email sign-up ensures a closed network of verified university students.</li>
-                <li>Builds credibility and lowers risk of scams.</li>
-            </ul>
-            <p class="section-text">
-                <strong>2. Smart filtering system</strong>
-            </p>
-            <ul class="section-list">
-                <li>Search by location, price, amenities, and availability.</li>
-                <li>Reduces information overload by surfacing the most relevant listings.</li>
-            </ul>
-            <p class="section-text">
-                <strong>3. Guided onboarding</strong>
-            </p>
-            <ul class="section-list">
-                <li>A quick, structured setup that reassures students while personalizing their housing search.</li>
-                <li>Sets the tone for a safer, more welcoming experience.</li>
+                <li><strong>Brief → 6 directions</strong>: a parametric engine (or Claude, with your own API key) generates six genuinely different live-rendered hero designs.</li>
+                <li><strong>Forced rationale</strong>: the winner needs a tag plus one honest sentence; every kill needs a one-click reason. The friction <em>is</em> the product.</li>
+                <li><strong>Evolve</strong>: your pick spawns the next generation — four refinements, two wildcards — for up to four rounds.</li>
+                <li><strong>The artifact</strong>: an SVG decision tree of every fork, a decision log, and a <strong>rejection gallery</strong> — because what you killed says more than what you kept.</li>
+                <li><strong>AI disagrees ⚡</strong>: the engine argues for one of your kills, and your rebuttal goes on the record — the exact pressure a design interview applies.</li>
+                <li><strong>Share by URL</strong>: the entire session is encoded into the link itself. No account, no server, no database.</li>
             </ul>
         </div>
 
-        <!-- Final Design Section -->
         <div class="content-section">
-            <h2 class="section-title">Final Designs</h2>
-            
-            <p class="section-text"><strong>1. Onboarding Flow</strong></p>
-            <p class="section-text">Clear, guided steps that verify and reassure students before showing listings.</p>
-            <div class="image-gallery">
-                <img src="Subly/Subly_Onboard.gif" alt="Onboard Flow" class="gallery-image phone-rec">
-            </div>
-            
-            <p class="section-text"><strong>2. Filtering Flow</strong></p>
-            <p class="section-text">Easy-to-use filters to quickly narrow down options.</p>
-            <div class="image-gallery">
-                <img src="Subly/Subly_Filter.gif" alt="Filter Flow" class="gallery-image phone-rec">
-            </div>
-            
-            <p class="section-text"><strong>3. Posting Flow</strong></p>
-            <p class="section-text">A simple way for students to share their housing opportunities with confidence.</p>
-            <div class="image-gallery">
-                <img src="Subly/Subly_Posting.gif" alt="Posting Flow" class="gallery-image phone-rec">
-            </div>
+            <h2 class="section-title">Design Decisions</h2>
+            <p class="section-text">
+                <strong>Six variants, not a hundred</strong><br>
+                Choice overload kills curation. Small batches with “evolve this direction” beat an infinite wall of options — the loop stays a conversation, not a chore.
+            </p>
+            <p class="section-text">
+                <strong>Calibrated friction</strong><br>
+                Early tests of the idea made every decision demand a full sentence — exhausting by round three. The final rule: one sentence for the winner, one click for each kill. Rationale everywhere, fatigue nowhere.
+            </p>
+            <p class="section-text">
+                <strong>HTML/CSS variants instead of image generation</strong><br>
+                Generated code renders live, costs almost nothing, and behaves like a design tool rather than an AI art toy. Every variant is a real page in a sandboxed iframe.
+            </p>
+            <p class="section-text">
+                <strong>Zero-backend architecture</strong><br>
+                The whole product is one HTML file. Sessions persist locally and share links carry the full session, compressed into the URL — an engineering constraint turned into a feature.
+            </p>
         </div>
 
-        <!-- Takeaways Section -->
+        <div class="content-section">
+            <h2 class="section-title">Try It</h2>
+            <p class="section-text">
+                Tastemark is live — run a real session: write a brief, kill five variants, defend one.
+            </p>
+            <a href="tastemark.html" class="back-link" style="border-width:2px;font-weight:600;">✦ Open Tastemark →</a>
+        </div>
+
         <div class="content-section">
             <h2 class="section-title">Takeaways</h2>
             <ul class="section-list">
-                <li>Trust is everything. Even small signals of credibility (like verification screens) made users feel more secure.</li>
-                <li>Less is more. A structured, low-pressure onboarding experience helped reduce initial overwhelm.</li>
-                <li>Personalization matters. Early setup made the platform feel more relevant and intuitive for different student needs.</li>
+                <li>Constraints can be the concept: “no server” produced the share-by-URL design, which became a differentiator.</li>
+                <li>Friction isn't always the enemy — the forced “why” is the entire value of the product, so the UX job was calibrating it, not removing it.</li>
+                <li>Building the tool sharpened the thesis it argues: the artifact that matters isn't the design — it's the reasoning.</li>
             </ul>
         </div>
 
@@ -533,19 +495,5 @@
         <a href="portfolio.html#projects" class="back-link">← Back to all projects</a>
     </div>
 
-    <script>
-        // Simple script to handle image loading errors
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('error', function() {
-                    this.alt = 'Image not available';
-                    this.style.backgroundColor = '#222';
-                    this.style.padding = '20px';
-                    this.style.color = '#ccc';
-                });
-            });
-        });
-    </script>
 </body>
 </html>

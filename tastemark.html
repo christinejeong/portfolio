@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tastemark — version control for design decisions</title>
+<meta name="description" content="AI makes a hundred variants. Your value is choosing — and knowing why. Tastemark records design decisions and their rationale, turning curation into a shareable artifact.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ Taste Portfolio — own identity, shared DNA ============ */
+:root {
+    --paper:   #f7f4ea;
+    --panel:   #fffdf6;
+    --ink:     #2b3cc4;
+    --ink-deep:#1b2a8f;
+    --ink-soft:#5b64b5;
+    --line:    rgba(43,60,196,.15);
+    --line-2:  rgba(43,60,196,.28);
+    --good:    #1d9a6c;
+    --bad:     #c8442c;
+    --gold:    #f2b705;
+    --sh:      0 10px 30px rgba(43,60,196,.10);
+    --ease: cubic-bezier(.22,1,.36,1);
+    --fd: 'Space Grotesk', system-ui, sans-serif;
+    --fb: 'Inter', system-ui, sans-serif;
+    --fm: 'IBM Plex Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { min-height:100%; }
+body {
+    font-family:var(--fb); background:var(--paper); color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+}
+::selection { background:var(--ink); color:var(--paper); }
+a { color:inherit; }
+button { font-family:var(--fb); cursor:pointer; }
+
+/* top bar */
+#bar {
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 26px; gap:16px;
+    background:rgba(247,244,234,.88); backdrop-filter:blur(10px);
+    border-bottom:1.5px solid var(--line);
+}
+.logo { font-family:var(--fd); font-weight:700; font-size:1.02rem; letter-spacing:-.01em; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+.logo .mk { color:var(--ink); font-size:1.2rem; }
+.logo small { font-family:var(--fm); font-weight:400; font-size:.62rem; color:var(--ink-soft); letter-spacing:.08em; margin-left:6px; }
+#steps { display:flex; align-items:center; gap:8px; font-family:var(--fm); font-size:.66rem; letter-spacing:.06em; color:var(--ink-soft); flex-wrap:wrap; justify-content:center; }
+.step { padding:5px 11px; border:1.5px solid transparent; border-radius:100px; white-space:nowrap; }
+.step.on { border-color:var(--ink); color:var(--ink); font-weight:600; }
+.step.done { color:var(--ink); opacity:.55; }
+.bar-actions { display:flex; gap:9px; align-items:center; }
+.tbtn {
+    font-family:var(--fm); font-size:.66rem; letter-spacing:.07em;
+    padding:8px 14px; border-radius:100px; border:1.5px solid var(--line-2);
+    background:var(--panel); color:var(--ink);
+    transition:all .25s var(--ease); white-space:nowrap;
+}
+.tbtn:hover { border-color:var(--ink); }
+.tbtn.solid { background:var(--ink); border-color:var(--ink); color:var(--paper); }
+.tbtn.solid:hover { background:var(--ink-deep); }
+.tbtn.live-on { background:var(--gold); border-color:var(--gold); color:#1c1c1c; }
+
+main { max-width:1240px; margin:0 auto; padding:34px 26px 90px; }
+
+/* ---------- phase: brief ---------- */
+#phase-brief { max-width:760px; margin:6vh auto 0; }
+.kicker { font-family:var(--fm); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+.kicker::before { content:""; width:24px; height:1.5px; background:var(--ink); }
+h1.title { font-family:var(--fd); font-weight:700; font-size:clamp(1.7rem,4vw,2.6rem); letter-spacing:-.02em; line-height:1.12; margin-bottom:14px; }
+.sub { color:var(--ink-soft); font-size:1.02rem; line-height:1.65; margin-bottom:30px; max-width:56ch; }
+.sub b { color:var(--ink); font-weight:600; }
+#brief {
+    width:100%; min-height:110px; resize:vertical;
+    font-family:var(--fb); font-size:1.05rem; line-height:1.6; color:var(--ink);
+    background:var(--panel); border:1.5px solid var(--line-2); border-radius:14px;
+    padding:18px 20px; outline:none; transition:border-color .25s;
+}
+#brief:focus { border-color:var(--ink); }
+#brief::placeholder { color:#9aa0cf; }
+.examples { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 26px; }
+.ex {
+    font-size:.8rem; padding:7px 13px; border-radius:100px;
+    border:1.5px solid var(--line); background:transparent; color:var(--ink-soft);
+    transition:all .25s var(--ease);
+}
+.ex:hover { color:var(--ink); border-color:var(--ink); }
+.go {
+    font-family:var(--fd); font-weight:600; font-size:1rem;
+    padding:15px 30px; border-radius:100px; border:none;
+    background:var(--ink); color:var(--paper);
+    box-shadow:var(--sh); transition:transform .25s var(--ease), background .25s;
+}
+.go:hover { transform:translateY(-2px); background:var(--ink-deep); }
+.go:disabled { opacity:.4; transform:none; cursor:not-allowed; }
+
+/* ---------- phase: curate ---------- */
+.round-head { display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
+.round-head h2 { font-family:var(--fd); font-weight:700; font-size:1.5rem; letter-spacing:-.01em; }
+.round-head .hint { font-family:var(--fm); font-size:.68rem; color:var(--ink-soft); letter-spacing:.05em; }
+.rule { font-size:.92rem; color:var(--ink-soft); margin-bottom:22px; }
+.rule b { color:var(--ink); }
+#grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+.vcard {
+    background:var(--panel); border:1.5px solid var(--line); border-radius:14px;
+    overflow:hidden; transition:border-color .25s, box-shadow .25s, opacity .3s;
+    display:flex; flex-direction:column;
+}
+.vcard.winner { border-color:var(--good); box-shadow:0 0 0 3px rgba(29,154,108,.18), var(--sh); }
+.vcard.rejected { opacity:.52; }
+.vcard.rejected .vprev::after { content:""; position:absolute; inset:0; background:repeating-linear-gradient(-45deg, transparent 0 14px, rgba(200,68,44,.06) 14px 20px); }
+.vprev { position:relative; aspect-ratio:16/10; overflow:hidden; background:#e9e6db; cursor:zoom-in; }
+.vprev iframe {
+    width:1200px; height:750px; border:0;
+    transform-origin:0 0; pointer-events:none; display:block;
+}
+.vmeta { padding:12px 14px 14px; display:flex; flex-direction:column; gap:10px; }
+.vrow { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.vname { font-family:var(--fm); font-size:.7rem; font-weight:600; letter-spacing:.08em; }
+.vtraits { font-size:.7rem; color:var(--ink-soft); text-align:right; line-height:1.45; }
+.vbtns { display:flex; gap:8px; }
+.pick, .rej {
+    flex:1; font-family:var(--fm); font-size:.66rem; letter-spacing:.08em;
+    padding:9px 0; border-radius:9px; border:1.5px solid var(--line-2);
+    background:transparent; color:var(--ink); transition:all .2s var(--ease);
+}
+.pick:hover { background:var(--good); border-color:var(--good); color:#fff; }
+.vcard.winner .pick { background:var(--good); border-color:var(--good); color:#fff; }
+.rej:hover { border-color:var(--bad); color:var(--bad); }
+.tagrow { display:none; flex-wrap:wrap; gap:6px; }
+.tagrow.open { display:flex; }
+.tagrow .tg {
+    font-family:var(--fm); font-size:.6rem; letter-spacing:.05em;
+    padding:5px 10px; border-radius:100px; border:1.5px solid var(--line);
+    background:transparent; color:var(--ink-soft); transition:all .2s;
+}
+.tagrow .tg:hover { border-color:var(--bad); color:var(--bad); }
+.tagrow .tg.sel { background:var(--bad); border-color:var(--bad); color:#fff; }
+.vcard.winner .tagrow .tg.sel, .vcard.winner .tagrow .tg:hover { background:var(--good); border-color:var(--good); color:#fff; }
+.rej-label { font-family:var(--fm); font-size:.6rem; color:var(--bad); letter-spacing:.06em; }
+
+/* why panel */
+#whybox {
+    position:sticky; bottom:0; z-index:60; margin-top:26px;
+    background:var(--panel); border:1.5px solid var(--line-2); border-radius:16px;
+    box-shadow:0 -8px 40px rgba(43,60,196,.12);
+    padding:18px 20px; display:none; flex-direction:column; gap:12px;
+}
+#whybox.open { display:flex; }
+#whybox .wtitle { font-family:var(--fd); font-weight:600; font-size:1rem; }
+#whybox .wtags { display:flex; flex-wrap:wrap; gap:7px; }
+#whybox .wtg {
+    font-family:var(--fm); font-size:.64rem; letter-spacing:.05em;
+    padding:6px 12px; border-radius:100px; border:1.5px solid var(--line);
+    background:transparent; color:var(--ink-soft); transition:all .2s;
+}
+#whybox .wtg:hover { border-color:var(--ink); color:var(--ink); }
+#whybox .wtg.sel { background:var(--ink); border-color:var(--ink); color:var(--paper); }
+#why {
+    width:100%; font-family:var(--fb); font-size:.95rem; color:var(--ink);
+    background:transparent; border:none; border-bottom:1.5px solid var(--line-2);
+    padding:8px 2px; outline:none;
+}
+#why:focus { border-color:var(--ink); }
+#why::placeholder { color:#9aa0cf; }
+.wactions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; align-items:center; }
+.wnote { font-family:var(--fm); font-size:.62rem; color:var(--bad); letter-spacing:.04em; margin-right:auto; display:none; }
+.wnote.show { display:block; }
+
+/* ---------- phase: artifact ---------- */
+.art-head { margin-bottom:26px; }
+.art-head .brief-echo { font-size:1rem; color:var(--ink-soft); max-width:70ch; line-height:1.6; }
+.art-grid { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:24px; align-items:start; }
+.art-grid > div { min-width:0; }
+.panel {
+    background:var(--panel); border:1.5px solid var(--line); border-radius:16px;
+    padding:20px 22px; margin-bottom:24px;
+}
+.panel h3 { font-family:var(--fd); font-weight:700; font-size:1.06rem; margin-bottom:4px; }
+.panel .ps { font-size:.82rem; color:var(--ink-soft); margin-bottom:16px; }
+.winner-frame { border:1.5px solid var(--line-2); border-radius:12px; overflow:hidden; aspect-ratio:16/10; position:relative; background:#e9e6db; cursor:zoom-in; }
+.winner-frame iframe { width:1200px; height:750px; border:0; transform-origin:0 0; pointer-events:none; display:block; }
+#tree-wrap { overflow-x:auto; }
+#tree { display:block; }
+.tree-node { cursor:pointer; }
+.dlog { list-style:none; display:flex; flex-direction:column; gap:12px; }
+.dlog li { border-left:2.5px solid var(--line-2); padding:2px 0 2px 14px; }
+.dlog .dr { font-family:var(--fm); font-size:.62rem; letter-spacing:.08em; color:var(--ink-soft); margin-bottom:3px; }
+.dlog .dw { font-size:.92rem; line-height:1.55; }
+.dlog .dw b { font-weight:600; }
+.dlog .dtag { display:inline-block; font-family:var(--fm); font-size:.6rem; letter-spacing:.05em; padding:3px 9px; border:1.5px solid var(--line-2); border-radius:100px; margin-left:6px; vertical-align:1px; }
+#rejgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; }
+.rj { border:1.5px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; }
+.rj .rjprev { position:relative; aspect-ratio:16/10; overflow:hidden; background:#e9e6db; cursor:zoom-in; }
+.rj .rjprev iframe { width:1200px; height:750px; border:0; transform-origin:0 0; pointer-events:none; display:block; }
+.rj .rjwhy { font-family:var(--fm); font-size:.58rem; letter-spacing:.05em; color:var(--bad); padding:8px 10px; border-top:1.5px solid var(--line); }
+#disagree-arg { background:rgba(43,60,196,.05); border-radius:12px; padding:14px 16px; font-size:.93rem; line-height:1.6; margin-bottom:12px; }
+#disagree-arg .who { font-family:var(--fm); font-size:.6rem; letter-spacing:.1em; color:var(--ink-soft); display:block; margin-bottom:6px; }
+#rebuttal { width:100%; min-height:70px; resize:vertical; font-family:var(--fb); font-size:.93rem; color:var(--ink); background:transparent; border:1.5px solid var(--line-2); border-radius:10px; padding:12px 14px; outline:none; }
+#rebuttal:focus { border-color:var(--ink); }
+.rebuttal-saved { background:rgba(29,154,108,.07); border-radius:12px; padding:14px 16px; font-size:.93rem; line-height:1.6; }
+.rebuttal-saved .who { font-family:var(--fm); font-size:.6rem; letter-spacing:.1em; color:var(--good); display:block; margin-bottom:6px; }
+#sharebar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+#share-url { flex:1; min-width:220px; font-family:var(--fm); font-size:.68rem; color:var(--ink-soft); background:transparent; border:1.5px solid var(--line); border-radius:100px; padding:10px 16px; outline:none; }
+.shared-banner { font-family:var(--fm); font-size:.66rem; letter-spacing:.08em; color:var(--ink-soft); border:1.5px dashed var(--line-2); border-radius:100px; padding:8px 18px; display:inline-block; margin-bottom:18px; }
+
+/* lightbox */
+#lb { display:none; position:fixed; inset:0; z-index:500; background:rgba(27,42,143,.45); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:30px; }
+#lb.open { display:flex; }
+#lb .lbin { width:min(1100px,94vw); background:var(--panel); border-radius:14px; overflow:hidden; border:1.5px solid var(--line-2); box-shadow:0 40px 90px rgba(27,42,143,.35); }
+#lb .lbhead { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-bottom:1.5px solid var(--line); font-family:var(--fm); font-size:.66rem; letter-spacing:.07em; color:var(--ink-soft); }
+#lb .lbhead button { background:none; border:none; font-size:1.3rem; color:var(--ink-soft); line-height:1; }
+#lb iframe { width:100%; height:min(68vh,700px); border:0; display:block; background:#fff; }
+
+/* key modal */
+#keymodal { display:none; position:fixed; inset:0; z-index:600; background:rgba(27,42,143,.45); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:24px; }
+#keymodal.open { display:flex; }
+#keymodal .km { width:min(520px,94vw); background:var(--panel); border-radius:16px; border:1.5px solid var(--line-2); padding:26px; }
+#keymodal h3 { font-family:var(--fd); font-size:1.1rem; margin-bottom:8px; }
+#keymodal p { font-size:.85rem; color:var(--ink-soft); line-height:1.6; margin-bottom:14px; }
+#apikey { width:100%; font-family:var(--fm); font-size:.78rem; padding:11px 14px; border:1.5px solid var(--line-2); border-radius:10px; background:transparent; color:var(--ink); outline:none; margin-bottom:14px; }
+#apikey:focus { border-color:var(--ink); }
+.kmrow { display:flex; gap:10px; justify-content:flex-end; }
+
+/* loading */
+#loading { display:none; flex-direction:column; align-items:center; gap:16px; padding:70px 0; }
+#loading.on { display:flex; }
+.spin { width:34px; height:34px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--ink); animation:sp 0.8s linear infinite; }
+@keyframes sp { to { transform:rotate(360deg); } }
+#loading .lmsg { font-family:var(--fm); font-size:.7rem; letter-spacing:.1em; color:var(--ink-soft); }
+
+.phase { display:none; }
+.phase.on { display:block; }
+footer { text-align:center; padding:26px; font-family:var(--fm); font-size:.62rem; letter-spacing:.08em; color:var(--ink-soft); }
+footer a { color:var(--ink); }
+
+@media (max-width:860px) {
+    .art-grid { grid-template-columns:1fr; }
+    #bar { padding:12px 14px; }
+    #steps { display:none; }
+    main { padding:24px 16px 70px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="bar">
+    <div class="logo"><span class="mk">✦</span>Tastemark<small>v0.1 MVP</small></div>
+    <div id="steps">
+        <span class="step" data-st="brief">BRIEF</span>
+        <span class="step" data-st="r1">R1</span>
+        <span class="step" data-st="r2">R2</span>
+        <span class="step" data-st="r3">R3</span>
+        <span class="step" data-st="r4">R4</span>
+        <span class="step" data-st="artifact">ARTIFACT</span>
+    </div>
+    <div class="bar-actions">
+        <a class="tbtn" href="tastemark_about.html" style="text-decoration:none">ABOUT ↗</a>
+        <button class="tbtn" id="livebtn" title="Bring your own Anthropic API key to generate variants with Claude">DEMO ENGINE</button>
+        <button class="tbtn" id="restart">NEW SESSION</button>
+    </div>
+</nav>
+
+<main>
+    <!-- BRIEF -->
+    <section id="phase-brief" class="phase on">
+        <div class="kicker">Version control for design decisions</div>
+        <h1 class="title">AI can make a hundred variants.<br>Your value is choosing and knowing why.</h1>
+        <p class="sub">Write a brief. The engine generates directions. You curate — but <b>you can't advance without stating why</b>. The session becomes a shareable decision tree: every fork, every kill, every reason. <b>GitHub commit history, but for design taste.</b></p>
+        <textarea id="brief" placeholder="Describe what you're designing… e.g. “Landing page hero for a fintech app that helps students build credit”"></textarea>
+        <div class="examples">
+            <button class="ex">Hero for a fintech app for students</button>
+            <button class="ex">Landing page for an AI journaling app</button>
+            <button class="ex">Splash for a campus marketplace</button>
+            <button class="ex">Hero for a sustainable coffee brand</button>
+        </div>
+        <button class="go" id="start">Generate 6 directions →</button>
+    </section>
+
+    <!-- CURATE -->
+    <section id="phase-curate" class="phase">
+        <div class="round-head">
+            <h2 id="rtitle">Round 1 — choose a direction</h2>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <span class="hint" id="rhint">DEMO ENGINE · 6 VARIANTS</span>
+                <button class="tbtn" id="backbtn" title="Go back one stage">← BACK</button>
+            </div>
+        </div>
+        <p class="rule">Pick <b>one winner</b> (tag + one sentence why). Every rejection needs <b>one tag</b> — a single click. Your reasons are the artifact.</p>
+        <div id="loading"><div class="spin"></div><div class="lmsg" id="lmsg">GENERATING…</div></div>
+        <div id="grid"></div>
+        <div id="whybox">
+            <div class="wtitle" id="wtitle">Why this one?</div>
+            <div class="wtags" id="wtags"></div>
+            <input id="why" type="text" maxlength="180" placeholder="One sentence — what made it win?">
+            <div class="wactions">
+                <span class="wnote" id="wnote"></span>
+                <button class="tbtn" id="finish">FINISH → BUILD ARTIFACT</button>
+                <button class="tbtn solid" id="evolve">EVOLVE THIS DIRECTION →</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARTIFACT -->
+    <section id="phase-artifact" class="phase">
+        <div class="art-head">
+            <div class="shared-banner" id="sharedbanner" style="display:none">SHARED SESSION — READ ONLY</div>
+            <div class="kicker">Decision artifact</div>
+            <h1 class="title" style="font-size:clamp(1.4rem,3vw,2rem)" id="art-title">Session artifact</h1>
+            <p class="brief-echo" id="art-brief"></p>
+        </div>
+
+        <div class="art-grid">
+            <div>
+                <div class="panel">
+                    <h3>Final pick</h3>
+                    <p class="ps" id="final-why"></p>
+                    <div class="winner-frame" id="winner-frame"></div>
+                </div>
+                <div class="panel">
+                    <h3>Decision tree</h3>
+                    <p class="ps">Every fork of the session. Filled node = chosen, hollow = killed. Click any node to view it.</p>
+                    <div id="tree-wrap"><svg id="tree"></svg></div>
+                </div>
+                <div class="panel">
+                    <h3>Rejection gallery</h3>
+                    <p class="ps">Portfolios only show winners. What you killed — and why — says more.</p>
+                    <div id="rejgrid"></div>
+                </div>
+            </div>
+            <div>
+                <div class="panel">
+                    <h3>Decision log</h3>
+                    <p class="ps">The reasoning, in order.</p>
+                    <ul class="dlog" id="dlog"></ul>
+                </div>
+                <div class="panel" id="disagree-panel">
+                    <h3>AI disagrees ⚡</h3>
+                    <p class="ps">The engine argues for one of your kills. Defend your call — your rebuttal is recorded too.</p>
+                    <div id="disagree-arg"></div>
+                    <div id="rebuttal-zone">
+                        <textarea id="rebuttal" placeholder="Your rebuttal — why does your pick still win?"></textarea>
+                        <div style="display:flex;justify-content:flex-end;margin-top:10px">
+                            <button class="tbtn solid" id="save-rebuttal">RECORD REBUTTAL</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Share this artifact</h3>
+                    <p class="ps">The whole session is encoded in the link — no account, no server.</p>
+                    <div id="sharebar">
+                        <input id="share-url" readonly>
+                        <button class="tbtn solid" id="copylink">COPY LINK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>✦ TASTEMARK — an experiment by <a href="portfolio.html">Christine Jeong</a> · <a href="tastemark_about.html">about this project</a> · the thinking is the job</footer>
+
+<div id="lb"><div class="lbin"><div class="lbhead"><span id="lbname">VARIANT</span><button onclick="LB.close()">×</button></div><iframe id="lbframe"></iframe></div></div>
+
+<div id="keymodal"><div class="km">
+    <h3>Live AI engine</h3>
+    <p>Paste an Anthropic API key to have <b>Claude</b> generate and evolve the variants instead of the built-in parametric engine. The key stays in this tab only (sessionStorage) and calls go straight from your browser to Anthropic. Shared links from live sessions include descriptions, not full previews.</p>
+    <input id="apikey" type="password" placeholder="sk-ant-…">
+    <div class="kmrow">
+        <button class="tbtn" id="key-cancel">USE DEMO ENGINE</button>
+        <button class="tbtn solid" id="key-save">ENABLE LIVE AI</button>
+    </div>
+</div></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   Tastemark MVP — single-file, no server.
+   Demo engine: parametric variant generator (params → HTML, deterministic,
+   so sessions serialize tiny and replay from the share URL).
+   Live engine: optional BYO Anthropic key, browser-direct calls.
+===================================================================== */
+
+/* ---------- tiny utils ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- design space (the parametric engine) ---------- */
+const LAYOUTS = ['center','split','editorial','card','banner','corner'];
+const PALS = [
+    {n:'ink on cream',   bg:'#faf6ec', tx:'#22308f', ac:'#2b3cc4', ac2:'#f2b705', dark:false},
+    {n:'midnight',       bg:'#0e1130', tx:'#eef0ff', ac:'#8fa0ff', ac2:'#ffd166', dark:true},
+    {n:'forest ledger',  bg:'#f2f5ef', tx:'#1d3b2a', ac:'#1d9a6c', ac2:'#e9c46a', dark:false},
+    {n:'warm terracotta',bg:'#fbf1e8', tx:'#5b2a1d', ac:'#c8442c', ac2:'#2a9d8f', dark:false},
+    {n:'graphite',       bg:'#17181c', tx:'#f4f4f2', ac:'#e0fe54', ac2:'#9aa0a6', dark:true},
+    {n:'porcelain blue', bg:'#f0f4fa', tx:'#173252', ac:'#2f6fed', ac2:'#f25f5c', dark:false},
+    {n:'plum studio',    bg:'#f7f0f7', tx:'#3d1e3d', ac:'#8338ec', ac2:'#ffbe0b', dark:false},
+    {n:'deep sea',       bg:'#062a33', tx:'#e7f6f2', ac:'#2fd6bd', ac2:'#ff9f1c', dark:true}
+];
+const TYPES = [
+    {n:'grotesk', h:"'Helvetica Neue',Arial,sans-serif", b:"'Helvetica Neue',Arial,sans-serif", w:800, ls:'-0.03em', tt:'none'},
+    {n:'editorial serif', h:"Georgia,'Times New Roman',serif", b:"'Helvetica Neue',Arial,sans-serif", w:500, ls:'-0.01em', tt:'none'},
+    {n:'mono-tech', h:"'Courier New',monospace", b:"'Helvetica Neue',Arial,sans-serif", w:700, ls:'-0.02em', tt:'none'},
+    {n:'shout caps', h:"Arial Black,Arial,sans-serif", b:"Georgia,serif", w:900, ls:'0.01em', tt:'uppercase'},
+    {n:'quiet serif', h:"Georgia,serif", b:"Georgia,serif", w:400, ls:'0', tt:'none'}
+];
+const DENS = [
+    {n:'airy', pad:9, gap:2.2, hs:4.4},
+    {n:'balanced', pad:7, gap:1.6, hs:3.7},
+    {n:'compact', pad:5, gap:1.1, hs:3.1}
+];
+const DECOS = ['none','orb','grid','ring','slab'];
+const BTNS = ['pill','sharp','ghost','underline'];
+
+const TAGS = ['hierarchy','contrast','tone','whitespace','accessibility','brand-fit','typography','clarity'];
+const REJTAGS = ['weak hierarchy','low contrast','wrong tone','cluttered','poor a11y','off-brand','type clash','generic'];
+
+function randParams() {
+    return {
+        layout: rnd(LAYOUTS), pal: Math.floor(Math.random()*PALS.length),
+        type: Math.floor(Math.random()*TYPES.length), dens: Math.floor(Math.random()*DENS.length),
+        deco: rnd(DECOS), btn: rnd(BTNS), copy: Math.floor(Math.random()*4)
+    };
+}
+function mutate(p) {
+    const q = {...p};
+    const dims = ['layout','pal','type','dens','deco','btn','copy'];
+    // change 2 random dims
+    const pickDims = dims.sort(()=>Math.random()-.5).slice(0,2);
+    for (const d of pickDims) {
+        if (d==='layout') q.layout = rnd(LAYOUTS.filter(x=>x!==q.layout));
+        else if (d==='pal') q.pal = (q.pal + 1 + Math.floor(Math.random()*(PALS.length-1))) % PALS.length;
+        else if (d==='type') q.type = (q.type + 1 + Math.floor(Math.random()*(TYPES.length-1))) % TYPES.length;
+        else if (d==='dens') q.dens = (q.dens + 1 + Math.floor(Math.random()*(DENS.length-1))) % DENS.length;
+        else if (d==='deco') q.deco = rnd(DECOS.filter(x=>x!==q.deco));
+        else if (d==='btn') q.btn = rnd(BTNS.filter(x=>x!==q.btn));
+        else q.copy = (q.copy+1+Math.floor(Math.random()*3)) % 4;
+    }
+    return q;
+}
+function batchFrom(winner) {
+    // 4 mutations of the winner + 2 wildcards
+    const out = [];
+    for (let i=0;i<4;i++) out.push(mutate(winner));
+    out.push(randParams(), randParams());
+    return out.sort(()=>Math.random()-.5);
+}
+
+/* ---------- copywriter (from the brief) ---------- */
+function makeCopy(brief, idx) {
+    const cleaned = brief.replace(/^["'\s]+|["'\s]+$/g,'');
+    const short = cleaned.length > 60 ? cleaned.slice(0, 57) + '…' : cleaned;
+    const noun = (cleaned.match(/for (an? |the )?([\w\- ]{3,40})/i)||[])[2] || short;
+    const H = [
+        [`Make it feel effortless.`, `The ${noun} that stays out of your way.`],
+        [`Built for how you actually work.`, `Everything a ${noun} should be — nothing it shouldn't.`],
+        [`Less noise. More signal.`, `A calmer take on ${noun}.`],
+        [`Start where it matters.`, `${noun.charAt(0).toUpperCase()+noun.slice(1)} — rebuilt around you.`]
+    ][idx % 4];
+    return { h: H[0], s: H[1], cta: ['Get started','Try it free','See how it works','Join the beta'][idx % 4] };
+}
+
+/* ---------- params → self-contained HTML ---------- */
+function variantHTML(p, brief) {
+    const pal = PALS[p.pal], ty = TYPES[p.type], dn = DENS[p.dens];
+    const c = makeCopy(brief, p.copy);
+    const btnCSS = {
+        pill:  `background:${pal.ac};color:${pal.dark?'#10122a':'#fff'};border:none;border-radius:99px;padding:.95em 2.1em;`,
+        sharp: `background:${pal.ac};color:${pal.dark?'#10122a':'#fff'};border:none;border-radius:4px;padding:.95em 2.1em;`,
+        ghost: `background:transparent;color:${pal.tx};border:2px solid ${pal.ac};border-radius:99px;padding:.9em 2em;`,
+        underline:`background:transparent;color:${pal.ac};border:none;border-bottom:3px solid ${pal.ac2};border-radius:0;padding:.6em .2em;`
+    }[p.btn];
+    const deco = {
+        none:'',
+        orb:`<div style="position:absolute;width:44vmin;height:44vmin;border-radius:50%;background:radial-gradient(circle at 30% 30%, ${pal.ac2}55, ${pal.ac}33 60%, transparent 75%);top:-10vmin;right:-8vmin;filter:blur(2px)"></div>`,
+        grid:`<div style="position:absolute;inset:0;background-image:linear-gradient(${pal.tx}12 1px,transparent 1px),linear-gradient(90deg,${pal.tx}12 1px,transparent 1px);background-size:48px 48px"></div>`,
+        ring:`<div style="position:absolute;width:52vmin;height:52vmin;border:2.5px solid ${pal.ac}44;border-radius:50%;bottom:-18vmin;left:-12vmin"></div><div style="position:absolute;width:34vmin;height:34vmin;border:2.5px dashed ${pal.ac2}66;border-radius:50%;bottom:-8vmin;left:2vmin"></div>`,
+        slab:`<div style="position:absolute;top:0;bottom:0;right:0;width:34%;background:${pal.ac}14;border-left:2.5px solid ${pal.ac}33"></div>`
+    }[p.deco];
+    const base = `margin:0;font-family:${ty.b};background:${pal.bg};color:${pal.tx};min-height:100vh;overflow:hidden;position:relative;`;
+    const hStyle = `font-family:${ty.h};font-weight:${ty.w};letter-spacing:${ty.ls};text-transform:${ty.tt};font-size:${dn.hs}em;line-height:1.06;margin:0 0 ${dn.gap*0.55}em;`;
+    const sStyle = `font-size:1.15em;line-height:1.6;opacity:.75;max-width:34em;margin:0 0 ${dn.gap}em;`;
+    const navHTML = `<div style="display:flex;justify-content:space-between;align-items:center;padding:1.6em ${dn.pad}vw;position:relative;z-index:2">
+        <div style="font-family:${ty.h};font-weight:700;font-size:1.05em">●&nbsp;${esc((brief.match(/[A-Za-z]{3,}/)||['Studio'])[0])}</div>
+        <div style="display:flex;gap:2em;font-size:.85em;opacity:.7"><span>Product</span><span>Pricing</span><span>About</span></div></div>`;
+    let body = '';
+    if (p.layout==='center') body = `${navHTML}<div style="position:relative;z-index:2;text-align:center;padding:${dn.pad*0.9}vh ${dn.pad}vw 0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh">
+        <h1 style="${hStyle}max-width:16em">${c.h}</h1><p style="${sStyle}">${c.s}</p><button style="${btnCSS}font-size:1em;font-family:inherit;cursor:pointer">${c.cta}</button></div>`;
+    else if (p.layout==='split') body = `${navHTML}<div style="position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:4vw;align-items:center;padding:${dn.pad*0.6}vh ${dn.pad}vw;min-height:70vh">
+        <div><h1 style="${hStyle}">${c.h}</h1><p style="${sStyle}">${c.s}</p><button style="${btnCSS}font-size:1em;font-family:inherit;cursor:pointer">${c.cta}</button></div>
+        <div style="aspect-ratio:4/3;border-radius:14px;background:linear-gradient(135deg,${pal.ac}22,${pal.ac2}33);border:2px solid ${pal.ac}33;display:flex;align-items:center;justify-content:center;font-size:3em;opacity:.65">◐</div></div>`;
+    else if (p.layout==='editorial') body = `${navHTML}<div style="position:relative;z-index:2;padding:${dn.pad*0.6}vh ${dn.pad}vw;min-height:70vh">
+        <div style="font-family:${ty.h};font-size:${dn.hs*2.4}em;line-height:1;opacity:.08;position:absolute;top:-2vh;right:4vw;font-weight:900">01</div>
+        <div style="max-width:44em;border-left:4px solid ${pal.ac};padding-left:2.2em;margin-top:6vh">
+        <div style="font-size:.78em;letter-spacing:.22em;text-transform:uppercase;opacity:.6;margin-bottom:1.4em">${esc(PALS[p.pal].n)} · issue</div>
+        <h1 style="${hStyle}">${c.h}</h1><p style="${sStyle}">${c.s}</p><button style="${btnCSS}font-size:1em;font-family:inherit;cursor:pointer">${c.cta}</button></div></div>`;
+    else if (p.layout==='card') body = `${navHTML}<div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-height:72vh;padding:0 ${dn.pad}vw">
+        <div style="background:${pal.dark?'#ffffff10':'#ffffffd9'};backdrop-filter:blur(6px);border:2px solid ${pal.ac}30;border-radius:20px;padding:${dn.gap*2.2}em ${dn.gap*2.6}em;max-width:38em;text-align:center;box-shadow:0 30px 70px #00000018">
+        <h1 style="${hStyle}font-size:${dn.hs*0.82}em">${c.h}</h1><p style="${sStyle}margin-left:auto;margin-right:auto">${c.s}</p><button style="${btnCSS}font-size:1em;font-family:inherit;cursor:pointer">${c.cta}</button></div></div>`;
+    else if (p.layout==='banner') body = `<div style="position:relative;z-index:2;background:${pal.ac};color:${pal.dark?'#10122a':'#fff'};text-align:center;font-size:.8em;letter-spacing:.14em;padding:.7em;text-transform:uppercase">Now in public beta</div>${navHTML}
+        <div style="position:relative;z-index:2;padding:${dn.pad*0.5}vh ${dn.pad}vw;min-height:62vh;display:flex;flex-direction:column;justify-content:center">
+        <h1 style="${hStyle}max-width:14em">${c.h}</h1><p style="${sStyle}">${c.s}</p><div><button style="${btnCSS}font-size:1em;font-family:inherit;cursor:pointer">${c.cta}</button>
+        <span style="margin-left:1.6em;font-size:.85em;opacity:.6">No card required</span></div></div>`;
+    else body = `${navHTML}<div style="position:relative;z-index:2;min-height:70vh;display:flex;align-items:flex-end;padding:0 ${dn.pad}vw ${dn.pad*1.2}vh">
+        <div style="max-width:40em"><h1 style="${hStyle}">${c.h}</h1><p style="${sStyle}">${c.s}</p><button style="${btnCSS}font-size:1em;font-family:inherit;cursor:pointer">${c.cta}</button></div>
+        <div style="position:absolute;top:16vh;right:${dn.pad}vw;font-size:.75em;letter-spacing:.2em;text-transform:uppercase;opacity:.5;writing-mode:vertical-rl">scroll ↓</div></div>`;
+    return `<!doctype html><html><head><meta charset="utf-8"><style>*{box-sizing:border-box}</style></head><body style="${base}">${deco}${body}</body></html>`;
+}
+function traits(p) { return `${p.layout} · ${PALS[p.pal].n} · ${TYPES[p.type].n} · ${DENS[p.dens].n}`; }
+
+/* ---------- state ---------- */
+let S = null;           // session
+let liveKey = sessionStorage.getItem('tp_key') || null;
+let pendingWinner = null;
+
+function newSession(brief) {
+    return { v:1, brief, engine: liveKey ? 'live' : 'demo', rounds: [], rebuttal:null, disagree:null, done:false };
+}
+
+/* ---------- engines ---------- */
+async function generateBatch(prev) {
+    if (S.engine === 'live' && liveKey) {
+        try { return await liveBatch(prev); }
+        catch(e) { console.warn('live engine failed, falling back', e); $('#rhint').textContent = 'LIVE AI FAILED → DEMO ENGINE'; }
+    }
+    const params = prev ? batchFrom(prev.params) : Array.from({length:6}, randParams);
+    return params.map(p => ({ params:p, html:null, live:false }));
+}
+async function liveBatch(prev) {
+    $('#lmsg').textContent = 'ASKING CLAUDE FOR 6 DIRECTIONS…';
+    const sys = 'You generate landing-page hero variants as COMPLETE self-contained HTML documents (inline CSS only, no external assets, no JS). Each must look intentionally different in layout, palette, and typography. Return ONLY valid JSON: an array of 6 objects {"label": "two-word style name", "html": "<!doctype html>…"}. Keep each under 3000 chars.';
+    const user = prev
+        ? `Brief: ${S.brief}\nThe designer chose this direction (HTML below) for the reason: "${prev.why}". Generate 4 refined evolutions of it plus 2 fresh wildcard directions.\n\nCHOSEN:\n${prev.html || variantHTML(prev.params, S.brief)}`
+        : `Brief: ${S.brief}\nGenerate 6 distinct first directions.`;
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{ 'content-type':'application/json', 'x-api-key':liveKey,
+            'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+        body: JSON.stringify({ model:'claude-sonnet-5', max_tokens:16000,
+            system: sys, messages:[{role:'user', content:user}] })
+    });
+    if (!r.ok) throw new Error('API ' + r.status);
+    const data = await r.json();
+    const txt = data.content.map(b=>b.text||'').join('');
+    const arr = JSON.parse(txt.slice(txt.indexOf('['), txt.lastIndexOf(']')+1));
+    return arr.slice(0,6).map(v => ({ params:null, html:v.html, label:v.label, live:true }));
+}
+
+/* ---------- iframe scaling ---------- */
+function fitFrames(scope) {
+    (scope||document).querySelectorAll('.vprev iframe, .rjprev iframe, .winner-frame iframe').forEach(f => {
+        const w = f.parentElement.clientWidth;
+        if (w) f.style.transform = `scale(${w/1200})`;
+    });
+}
+addEventListener('resize', () => fitFrames());
+
+/* ---------- phases ---------- */
+function setStep(id) {
+    $$('#steps .step').forEach(s => {
+        s.classList.toggle('on', s.dataset.st === id);
+        const order = ['brief','r1','r2','r3','r4','artifact'];
+        s.classList.toggle('done', order.indexOf(s.dataset.st) < order.indexOf(id));
+    });
+}
+function show(phase) {
+    $$('.phase').forEach(p => p.classList.remove('on'));
+    $('#phase-' + phase).classList.add('on');
+    scrollTo(0,0);
+}
+
+/* ---------- curate round ---------- */
+async function startRound(prevPick) {
+    show('curate');
+    const n = S.rounds.length + 1;
+    setStep('r' + Math.min(n,4));
+    $('#rtitle').textContent = `Round ${n} — ${n===1?'choose a direction':'evolve or pivot'}`;
+    $('#rhint').textContent = (S.engine==='live'?'CLAUDE ENGINE':'DEMO ENGINE') + ' · 6 VARIANTS';
+    $('#grid').innerHTML = '';
+    $('#whybox').classList.remove('open');
+    $('#loading').classList.add('on');
+    const batch = await generateBatch(prevPick);
+    $('#loading').classList.remove('on');
+    S.rounds.push({ variants: batch.map(v => ({...v, reject:null})), winner:null, tag:null, why:null });
+    renderGrid();
+    save();
+}
+function renderGrid() {
+    const round = S.rounds[S.rounds.length-1];
+    const grid = $('#grid'); grid.innerHTML = '';
+    round.variants.forEach((v, i) => {
+        const card = document.createElement('div');
+        card.className = 'vcard';
+        card.dataset.i = i;
+        const name = 'VARIANT ' + 'ABCDEF'[i] + (v.label ? ' · ' + v.label.toUpperCase() : '');
+        card.innerHTML = `
+            <div class="vprev" title="Click to enlarge"><iframe loading="lazy" sandbox=""></iframe></div>
+            <div class="vmeta">
+                <div class="vrow"><span class="vname">${name}</span><span class="vtraits">${v.params ? traits(v.params) : (v.label||'AI variant')}</span></div>
+                <div class="vbtns"><button class="pick">✓ PICK</button><button class="rej">✗ KILL…</button></div>
+                <div class="tagrow">${REJTAGS.map(t=>`<button class="tg" data-t="${t}">${t}</button>`).join('')}</div>
+                <span class="rej-label" style="display:none"></span>
+            </div>`;
+        const html = v.html || variantHTML(v.params, S.brief);
+        card.querySelector('iframe').srcdoc = html;
+        card.querySelector('.vprev').addEventListener('click', () => LB.open(name, html));
+        card.querySelector('.pick').addEventListener('click', () => pickWinner(i));
+        card.querySelector('.rej').addEventListener('click', () => card.querySelector('.tagrow').classList.toggle('open'));
+        card.querySelectorAll('.tg').forEach(b => b.addEventListener('click', () => rejectVariant(i, b.dataset.t, card, b)));
+        grid.appendChild(card);
+    });
+    // restore any decisions already made in this round (e.g. after ← BACK)
+    round.variants.forEach((v, i) => {
+        if (!v.reject) return;
+        const card = grid.children[i];
+        card.classList.add('rejected');
+        const b = [...card.querySelectorAll('.tg')].find(x => x.dataset.t === v.reject);
+        if (b) b.classList.add('sel');
+        const l = card.querySelector('.rej-label');
+        l.style.display = 'inline'; l.textContent = '✗ killed — ' + v.reject;
+    });
+    if (round.winner != null) pickWinner(round.winner);
+    fitFrames(grid);
+    requestAnimationFrame(() => fitFrames(grid));
+}
+function rejectVariant(i, tag, card, btn) {
+    const round = S.rounds[S.rounds.length-1];
+    if (round.winner === i) {
+        // changed your mind — un-pick, then kill
+        round.winner = null; pendingWinner = null;
+        card.classList.remove('winner');
+        $('#whybox').classList.remove('open');
+    }
+    round.variants[i].reject = tag;
+    card.classList.add('rejected');
+    card.querySelectorAll('.tg').forEach(b => b.classList.toggle('sel', b===btn));
+    card.querySelector('.tagrow').classList.remove('open');
+    const lb = card.querySelector('.rej-label');
+    lb.style.display='inline'; lb.textContent = '✗ killed — ' + tag;
+    checkReady(); save();
+}
+function pickWinner(i) {
+    const round = S.rounds[S.rounds.length-1];
+    round.winner = i;
+    round.variants[i].reject = null;
+    pendingWinner = i;
+    $$('#grid .vcard').forEach(c => {
+        const ci = +c.dataset.i;
+        c.classList.toggle('winner', ci===i);
+        if (ci===i) {
+            c.classList.remove('rejected');
+            const l=c.querySelector('.rej-label'); l.style.display='none';
+            c.querySelectorAll('.tg').forEach(b=>b.classList.remove('sel'));
+            c.querySelector('.tagrow').classList.remove('open');
+        }
+    });
+    $('#wtitle').textContent = `Why Variant ${'ABCDEF'[i]}?`;
+    $('#wtags').innerHTML = TAGS.map(t=>`<button class="wtg" data-t="${t}">${t}</button>`).join('');
+    $$('#wtags .wtg').forEach(b => b.addEventListener('click', () => {
+        $$('#wtags .wtg').forEach(x=>x.classList.remove('sel'));
+        b.classList.add('sel'); round.tag = b.dataset.t; checkReady(); save();
+    }));
+    if (round.tag) { const b = $(`#wtags .wtg[data-t="${round.tag}"]`); if (b) b.classList.add('sel'); }
+    $('#why').value = round.why || '';
+    $('#whybox').classList.add('open');
+    $('#finish').style.display = S.rounds.length >= 2 ? '' : 'none';
+    $('#evolve').style.display = S.rounds.length >= 4 ? 'none' : '';
+    checkReady(); save();
+    $('#whybox').scrollIntoView({behavior:'smooth', block:'end'});
+}
+function readiness() {
+    const round = S.rounds[S.rounds.length-1];
+    if (round.winner==null) return 'Pick a winner first.';
+    const untagged = round.variants.filter((v,i)=>i!==round.winner && !v.reject).length;
+    if (untagged) return `${untagged} rejected variant${untagged>1?'s':''} still need${untagged>1?'':'s'} a kill tag.`;
+    if (!round.tag) return 'Tag your pick (one click).';
+    if (!$('#why').value.trim() || $('#why').value.trim().length < 8) return 'One honest sentence — why did it win?';
+    return null;
+}
+function checkReady() {
+    const msg = readiness();
+    const note = $('#wnote');
+    note.textContent = msg || '';
+    note.classList.toggle('show', !!msg);
+    $('#evolve').disabled = $('#finish').disabled = !!msg;
+    $('#evolve').style.opacity = $('#finish').style.opacity = msg ? .45 : 1;
+}
+$('#why') && $('#why').addEventListener('input', () => { const r=S&&S.rounds[S.rounds.length-1]; if(r){r.why=$('#why').value;} checkReady(); });
+
+function commitRound() {
+    const round = S.rounds[S.rounds.length-1];
+    round.why = $('#why').value.trim();
+    const v = round.variants[round.winner];
+    if (v.live && !v.html) v.html = null;
+    return { params: v.params, html: v.html, why: round.why };
+}
+
+/* ---------- artifact ---------- */
+function finishSession() {
+    S.done = true;
+    buildDisagree();
+    save();
+    renderArtifact(false);
+}
+function winnerOf(round) { return round.variants[round.winner]; }
+
+function buildDisagree() {
+    // argue for a rejected variant from the final round
+    const last = S.rounds[S.rounds.length-1];
+    const rejIdx = last.variants.findIndex((v,i)=>i!==last.winner && v.reject);
+    if (rejIdx < 0) { S.disagree = null; return; }
+    const rej = last.variants[rejIdx], win = winnerOf(last);
+    let arg;
+    if (rej.params && win.params) {
+        const rp = rej.params, wp = win.params;
+        const bits = [];
+        if (rp.layout!==wp.layout) bits.push(`its “${rp.layout}” structure gives the eye a clearer entry point than “${wp.layout}”`);
+        if (rp.pal!==wp.pal) bits.push(`the ${PALS[rp.pal].n} palette carries more ${PALS[rp.pal].dark?'contrast and focus':'warmth and approachability'} than ${PALS[wp.pal].n}`);
+        if (rp.type!==wp.type) bits.push(`${TYPES[rp.type].n} typography would differentiate the brand more than ${TYPES[wp.type].n}`);
+        if (rp.dens!==wp.dens) bits.push(`its ${DENS[rp.dens].n} spacing balances information density better`);
+        if (!bits.length) bits.push('it makes the same argument with less decoration — which usually wins in usability testing');
+        arg = `You killed Variant ${'ABCDEF'[rejIdx]} for “${rej.reject}”, but consider: ${bits.slice(0,2).join('; ')}. Rejection tags are cheap — are you sure this wasn't taste-by-habit?`;
+    } else {
+        arg = `You killed Variant ${'ABCDEF'[rejIdx]} for “${rej.reject}”. Its direction (${rej.label||'the rejected approach'}) arguably answers the brief more literally than your pick. Defend the call.`;
+    }
+    S.disagree = { idx: rejIdx, round: S.rounds.length, text: arg };
+}
+
+function renderArtifact(readonly) {
+    show('artifact'); setStep('artifact');
+    $('#sharedbanner').style.display = readonly ? 'inline-block' : 'none';
+    $('#art-title').textContent = readonly ? 'Shared decision artifact' : 'Your decision artifact';
+    $('#art-brief').textContent = '“' + S.brief + '” — ' + S.rounds.length + ' rounds, ' +
+        S.rounds.reduce((a,r)=>a+r.variants.length,0) + ' variants considered, ' +
+        S.rounds.reduce((a,r)=>a+r.variants.filter(v=>v.reject).length,0) + ' killed with reasons.';
+
+    // winner
+    const last = S.rounds[S.rounds.length-1];
+    const win = winnerOf(last);
+    const winHTML = win.html || variantHTML(win.params, S.brief);
+    $('#final-why').innerHTML = `<b>${esc(last.tag)}</b> — “${esc(last.why)}”`;
+    $('#winner-frame').innerHTML = '<iframe sandbox=""></iframe>';
+    $('#winner-frame iframe').srcdoc = winHTML;
+    $('#winner-frame').onclick = () => LB.open('FINAL PICK', winHTML);
+
+    renderTree(); renderLog(); renderRejects(); renderDisagree(readonly); renderShare();
+    fitFrames();
+    requestAnimationFrame(() => fitFrames());
+}
+
+function renderTree() {
+    const svg = $('#tree');
+    const R = S.rounds.length, COLW = 150, NW = 92, NH = 60, VPAD = 14;
+    const maxN = Math.max(...S.rounds.map(r=>r.variants.length));
+    const H = maxN*(NH+VPAD)+30, W = R*COLW+40;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('width', W); svg.setAttribute('height', H);
+    let out = '';
+    const pos = [];
+    S.rounds.forEach((r, ri) => {
+        pos[ri] = [];
+        r.variants.forEach((v, vi) => {
+            const x = 20 + ri*COLW, y = 15 + vi*(NH+VPAD);
+            pos[ri][vi] = {x,y};
+            const isWin = r.winner === vi;
+            const pal = v.params ? PALS[v.params.pal] : {bg:'#ddd', ac:'#888'};
+            out += `<g class="tree-node" data-r="${ri}" data-v="${vi}">
+                <rect x="${x}" y="${y}" width="${NW}" height="${NH}" rx="9"
+                    fill="${isWin ? pal.bg : 'transparent'}"
+                    stroke="${isWin ? 'var(--good)' : 'var(--line-2)'}" stroke-width="${isWin?2.5:1.5}"
+                    ${!isWin && v.reject ? 'stroke-dasharray="4 4"' : ''}/>
+                <rect x="${x+7}" y="${y+7}" width="${NW-14}" height="${NH*0.44}" rx="4" fill="${pal.bg}" stroke="${pal.ac}" stroke-width="1"/>
+                <circle cx="${x+15}" cy="${y+NH*0.29}" r="4" fill="${pal.ac}"/>
+                <text x="${x+7}" y="${y+NH-9}" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="${isWin?'var(--good)':'var(--ink-soft)'}">${isWin?'✓ ':'✗ '}${'ABCDEF'[vi]}${v.reject? ' · '+esc(v.reject).slice(0,10):''}</text>
+            </g>`;
+        });
+        if (ri>0) {
+            const pw = pos[ri-1][S.rounds[ri-1].winner];
+            r.variants.forEach((v,vi)=>{
+                const q = pos[ri][vi];
+                out = `<path d="M ${pw.x+NW} ${pw.y+NH/2} C ${pw.x+NW+28} ${pw.y+NH/2}, ${q.x-28} ${q.y+NH/2}, ${q.x} ${q.y+NH/2}" fill="none" stroke="var(--line)" stroke-width="1.5"/>` + out;
+            });
+        }
+    });
+    svg.innerHTML = out;
+    svg.querySelectorAll('.tree-node').forEach(n => n.addEventListener('click', () => {
+        const v = S.rounds[+n.dataset.r].variants[+n.dataset.v];
+        LB.open(`ROUND ${+n.dataset.r+1} · VARIANT ${'ABCDEF'[+n.dataset.v]}`, v.html || variantHTML(v.params, S.brief));
+    }));
+}
+function renderLog() {
+    $('#dlog').innerHTML = S.rounds.map((r,i)=>`
+        <li><div class="dr">ROUND ${i+1} · PICKED ${'ABCDEF'[r.winner]} · KILLED ${r.variants.filter(v=>v.reject).length}</div>
+        <div class="dw">“${esc(r.why)}”<span class="dtag">${esc(r.tag)}</span></div></li>`).join('');
+}
+function renderRejects() {
+    const grid = $('#rejgrid'); grid.innerHTML='';
+    S.rounds.forEach((r,ri)=>r.variants.forEach((v,vi)=>{
+        if (!v.reject) return;
+        const d = document.createElement('div');
+        d.className='rj';
+        d.innerHTML = `<div class="rjprev"><iframe loading="lazy" sandbox=""></iframe></div><div class="rjwhy">R${ri+1}·${'ABCDEF'[vi]} — ${esc(v.reject)}</div>`;
+        const html = v.html || variantHTML(v.params, S.brief);
+        d.querySelector('iframe').srcdoc = html;
+        d.querySelector('.rjprev').addEventListener('click', ()=>LB.open(`KILLED — R${ri+1} VARIANT ${'ABCDEF'[vi]}`, html));
+        grid.appendChild(d);
+    }));
+    if (!grid.children.length) grid.innerHTML = '<p class="ps">Nothing was killed. Brave.</p>';
+}
+function renderDisagree(readonly) {
+    const p = $('#disagree-panel');
+    if (!S.disagree) { p.style.display='none'; return; }
+    p.style.display='';
+    $('#disagree-arg').innerHTML = `<span class="who">THE ENGINE ARGUES</span>${esc(S.disagree.text)}`;
+    const zone = $('#rebuttal-zone');
+    if (S.rebuttal) {
+        zone.innerHTML = `<div class="rebuttal-saved"><span class="who">YOUR REBUTTAL — ON THE RECORD</span>${esc(S.rebuttal)}</div>`;
+    } else if (readonly) {
+        zone.innerHTML = `<p class="ps">No rebuttal was recorded.</p>`;
+    }
+}
+function renderShare() {
+    const data = serialize();
+    const url = location.origin + location.pathname + '#s=' + data;
+    $('#share-url').value = url;
+}
+function serialize() {
+    const slim = {
+        v:1, brief:S.brief, engine:S.engine, rebuttal:S.rebuttal, disagree:S.disagree,
+        rounds: S.rounds.map(r=>({
+            winner:r.winner, tag:r.tag, why:r.why,
+            variants:r.variants.map(v=>({ params:v.params, reject:v.reject, label:v.label||null,
+                html: (S.engine==='live' && v.html && (v.reject===null||v===r.variants[r.winner])) ? null : null }))
+        }))
+    };
+    return btoa(unescape(encodeURIComponent(JSON.stringify(slim)))).replace(/\+/g,'-').replace(/\//g,'_');
+}
+function deserialize(b64) {
+    const json = decodeURIComponent(escape(atob(b64.replace(/-/g,'+').replace(/_/g,'/'))));
+    return JSON.parse(json);
+}
+
+/* ---------- lightbox ---------- */
+const LB = {
+    open(name, html) { $('#lbname').textContent = name; $('#lbframe').srcdoc = html; $('#lb').classList.add('open'); },
+    close() { $('#lb').classList.remove('open'); $('#lbframe').srcdoc=''; }
+};
+$('#lb').addEventListener('click', e => { if (e.target.id==='lb') LB.close(); });
+addEventListener('keydown', e => { if (e.key==='Escape') LB.close(); });
+
+/* ---------- persistence ---------- */
+function save() { try { localStorage.setItem('tp_session', JSON.stringify(S)); } catch(e){} }
+
+/* ---------- wiring ---------- */
+$$('.ex').forEach(b => b.addEventListener('click', () => { $('#brief').value = b.textContent; }));
+$('#start').addEventListener('click', async () => {
+    const brief = $('#brief').value.trim();
+    if (brief.length < 8) { $('#brief').focus(); $('#brief').placeholder = 'Give the engine at least a real sentence…'; return; }
+    S = newSession(brief);
+    await startRound(null);
+});
+$('#evolve').addEventListener('click', async () => {
+    if (readiness()) return checkReady();
+    const pick = commitRound(); save();
+    await startRound(pick);
+});
+$('#finish').addEventListener('click', () => {
+    if (readiness()) return checkReady();
+    commitRound(); finishSession();
+});
+$('#restart').addEventListener('click', () => {
+    if (S && !S.done && !confirm('Abandon this session?')) return;
+    S = null; localStorage.removeItem('tp_session');
+    history.replaceState(null,'',location.pathname);
+    show('brief'); setStep('brief'); $('#brief').value='';
+});
+$('#backbtn').addEventListener('click', () => {
+    if (!S || !S.rounds.length) return;
+    if (S.rounds.length === 1) {
+        const r = S.rounds[0];
+        const touched = r.winner != null || r.variants.some(v => v.reject);
+        if (touched && !confirm('Go back to the brief? Round 1 decisions will be discarded.')) return;
+        $('#brief').value = S.brief;
+        S = null; localStorage.removeItem('tp_session');
+        show('brief'); setStep('brief');
+        return;
+    }
+    S.rounds.pop();
+    const n = S.rounds.length;
+    show('curate');
+    setStep('r' + Math.min(n, 4));
+    $('#rtitle').textContent = `Round ${n} — ${n === 1 ? 'choose a direction' : 'evolve or pivot'}`;
+    $('#rhint').textContent = (S.engine === 'live' ? 'CLAUDE ENGINE' : 'DEMO ENGINE') + ' · 6 VARIANTS';
+    $('#whybox').classList.remove('open');
+    renderGrid();
+    save();
+});
+$('#copylink').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('#share-url').value); $('#copylink').textContent='COPIED ✓'; }
+    catch(e){ $('#share-url').select(); document.execCommand('copy'); $('#copylink').textContent='COPIED ✓'; }
+    setTimeout(()=>$('#copylink').textContent='COPY LINK', 1600);
+});
+$('#save-rebuttal').addEventListener('click', () => {
+    const t = $('#rebuttal').value.trim();
+    if (t.length < 8) { $('#rebuttal').placeholder='Defend it properly — one real sentence at least.'; return; }
+    S.rebuttal = t; save(); renderDisagree(false); renderShare();
+});
+
+/* live engine toggle */
+function refreshLiveBtn() {
+    const b = $('#livebtn');
+    b.textContent = liveKey ? 'LIVE AI ✦' : 'DEMO ENGINE';
+    b.classList.toggle('live-on', !!liveKey);
+}
+$('#livebtn').addEventListener('click', () => $('#keymodal').classList.add('open'));
+$('#key-cancel').addEventListener('click', () => { liveKey=null; sessionStorage.removeItem('tp_key'); refreshLiveBtn(); $('#keymodal').classList.remove('open'); });
+$('#key-save').addEventListener('click', () => {
+    const k = $('#apikey').value.trim();
+    if (k.startsWith('sk-ant')) { liveKey=k; sessionStorage.setItem('tp_key', k); }
+    refreshLiveBtn(); $('#keymodal').classList.remove('open');
+});
+
+/* ---------- boot ---------- */
+(function boot() {
+    refreshLiveBtn();
+    const m = location.hash.match(/#s=(.+)/);
+    if (m) {
+        try { S = deserialize(m[1]); renderArtifact(true); return; }
+        catch(e) { console.warn('bad share link', e); }
+    }
+    const saved = localStorage.getItem('tp_session');
+    if (saved) {
+        try {
+            const sv = JSON.parse(saved);
+            if (sv.done) { S = sv; renderArtifact(false); return; }
+        } catch(e){}
+    }
+    show('brief'); setStep('brief');
+})();
+</script>
+</body>
+</html>
