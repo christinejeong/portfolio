@@ -269,7 +269,7 @@ footer a { color:var(--ink); }
     <section id="phase-brief" class="phase on">
         <div class="kicker">Version control for design decisions</div>
         <h1 class="title">AI can make a hundred variants.<br>Your value is choosing and knowing why.</h1>
-        <p class="sub">Write a brief. The engine generates directions. You curate — but <b>you can't advance without stating why</b>. The session becomes a shareable decision tree: every fork, every kill, every reason. <b>GitHub commit history, but for design taste.</b></p>
+        <p class="sub">Write a brief. The engine generates directions. You curate, but <b>you can't advance without stating why</b>. The session becomes a shareable decision tree: every fork, every kill, every reason. <b>GitHub commit history, but for design taste.</b></p>
         <textarea id="brief" placeholder="Describe what you're designing… e.g. “Landing page hero for a fintech app that helps students build credit”"></textarea>
         <div class="examples">
             <button class="ex">Hero for a fintech app for students</button>
@@ -443,6 +443,30 @@ function mutate(p) {
     }
     return q;
 }
+const TOPIC_HINTS = [
+    {re:/fintech|bank|credit|invest|money|financ|insur/i,            pals:[5,1], types:[0,2]},
+    {re:/coffee|cafe|food|restaurant|organic|sustain|eco|green|farm/i, pals:[2,3], types:[1,4]},
+    {re:/journal|diary|wellness|mindful|health|calm|sleep|meditat/i,  pals:[0,6], types:[4,1]},
+    {re:/game|gaming|esport|music|festival|party|club/i,              pals:[4,1], types:[3,0]},
+    {re:/market|shop|store|commerce|campus|student|sell/i,            pals:[3,5], types:[0,1]},
+    {re:/\bai\b|agent|model|dev|code|tech|data|cloud|api/i,         pals:[1,4], types:[2,0]}
+];
+function firstBatch(brief) {
+    const hint = TOPIC_HINTS.find(h => h.re.test(brief)) || null;
+    const layouts = [...LAYOUTS].sort(() => Math.random() - .5);   // all 6 structures, no repeats
+    const palPool = PALS.map((_, i) => i).sort(() => Math.random() - .5);
+    if (hint) for (const pi of [...hint.pals].reverse()) {          // topic palettes lead the pool
+        const at = palPool.indexOf(pi);
+        if (at > 0) { palPool.splice(at, 1); palPool.unshift(pi); }
+    }
+    return layouts.map((L, i) => ({
+        layout: L,
+        pal: palPool[i % palPool.length],
+        type: (hint && i < 3) ? hint.types[i % hint.types.length] : Math.floor(Math.random() * TYPES.length),
+        dens: Math.floor(Math.random() * DENS.length),
+        deco: rnd(DECOS), btn: rnd(BTNS), copy: i % 6
+    }));
+}
 function batchFrom(winner) {
     // 4 mutations of the winner + 2 wildcards
     const out = [];
@@ -458,11 +482,13 @@ function makeCopy(brief, idx) {
     const noun = (cleaned.match(/for (an? |the )?([\w\- ]{3,40})/i)||[])[2] || short;
     const H = [
         [`Make it feel effortless.`, `The ${noun} that stays out of your way.`],
-        [`Built for how you actually work.`, `Everything a ${noun} should be — nothing it shouldn't.`],
+        [`Built for how you actually work.`, `Everything a ${noun} should be, nothing it shouldn't.`],
         [`Less noise. More signal.`, `A calmer take on ${noun}.`],
-        [`Start where it matters.`, `${noun.charAt(0).toUpperCase()+noun.slice(1)} — rebuilt around you.`]
-    ][idx % 4];
-    return { h: H[0], s: H[1], cta: ['Get started','Try it free','See how it works','Join the beta'][idx % 4] };
+        [`Start where it matters.`, `${noun.charAt(0).toUpperCase()+noun.slice(1)}, rebuilt around you.`],
+        [`Finally, ${noun} done right.`, `No clutter. No dark patterns. Just the thing you came for.`],
+        [`Your ${noun}, ten seconds in.`, `Designed to be understood before the page finishes loading.`]
+    ][idx % 6];
+    return { h: H[0], s: H[1], cta: ['Get started','Try it free','See how it works','Join the beta','Start exploring','Claim early access'][idx % 6] };
 }
 
 /* ---------- params → self-contained HTML ---------- */
@@ -528,7 +554,14 @@ async function generateBatch(prev) {
         try { return await liveBatch(prev); }
         catch(e) { console.warn('live engine failed, falling back', e); $('#rhint').textContent = 'LIVE AI FAILED → DEMO ENGINE'; }
     }
-    const params = prev ? batchFrom(prev.params) : Array.from({length:6}, randParams);
+    const stages = prev
+        ? ['READING YOUR RATIONALE…', 'MUTATING THE WINNING DIRECTION…', 'ADDING 2 WILDCARDS…', 'RENDERING 6 VARIANTS…']
+        : ['READING YOUR BRIEF…', 'EXPLORING THE DESIGN SPACE…', 'FETCHING TYPE & COLOR SYSTEMS…', 'RENDERING 6 VARIANTS…'];
+    for (const st of stages) {
+        $('#lmsg').textContent = st;
+        await new Promise(r => setTimeout(r, 380 + Math.random() * 300));
+    }
+    const params = prev ? batchFrom(prev.params) : firstBatch(S.brief);
     return params.map(p => ({ params:p, html:null, live:false }));
 }
 async function liveBatch(prev) {

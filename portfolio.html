@@ -121,14 +121,14 @@
             padding: 92px 28px 36px;
             display: none;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;   /* center would clip the top when content overflows */
             align-items: center;
             overflow-y: auto;
             opacity: 0;
             transition: opacity 0.5s var(--ease);
         }
         .panel.active { display: flex; opacity: 1; }
-        .container { width: 100%; max-width: 1180px; margin: 0 auto; }
+        .container { width: 100%; max-width: 1180px; margin: auto; }   /* auto margins = safe vertical centering */
 
         /* ============================================================
            HERO — quiet, left-aligned, ink on paper
@@ -228,15 +228,15 @@
         /* ── pencil writes the headline letter by letter (JS-driven), then the marks ── */
         .hero-name { position: relative; }
         .hn-line { display: block; }
-        .ch {
+        .wd {
             display: inline-block;
-            clip-path: inset(-0.25em 105% -0.2em -2%);   /* hidden until inked */
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(4px);   /* hidden until the ink soaks in */
         }
-        .ch.on {
-            transition: clip-path 45ms linear;
-            clip-path: inset(-0.25em -8% -0.2em -2%);
+        @keyframes soakIn {
+            to { opacity: 1; filter: blur(0); transform: none; }
         }
-        @keyframes chOn { to { clip-path: inset(-0.25em -8% -0.2em -2%); } }
 
         .panel.active .hero-lines { animation: riseIn 0.6s var(--ease) 3.7s both; }
         .panel.active .hero-links { animation: riseIn 0.6s var(--ease) 3.9s both; }
@@ -412,7 +412,8 @@
             * { animation: none !important; transition: none !important; }
             .reveal { opacity: 1; transform: none; }
             path.sk { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
-            .hn-line, .ch { clip-path: none !important; }
+            .hn-line { clip-path: none !important; }
+            .wd { opacity: 1 !important; filter: none !important; transform: none !important; }
             .hero-lines, .hero-links { opacity: 1 !important; transform: none !important; }
         }
     </style>
@@ -436,26 +437,27 @@
         </svg>
 
         <!-- hand-drawn doodles: tennis, art, books, travel -->
-        <svg class="scribble lg" style="top:12%; left:6%; width:74px; transform:rotate(-14deg);" viewBox="0 0 80 124" aria-hidden="true">
-            <path class="sk" pathLength="1" style="animation-delay:1.4s;animation-duration:.5s" d="M 40 8 C 58 6, 70 20, 68 40 C 66 58, 52 70, 38 68 C 22 66, 12 52, 14 34 C 16 16, 26 10, 40 8 Z"/>
-            <path class="sk" pathLength="1" style="animation-delay:1.7s;animation-duration:.45s" d="M 27 16 C 28 30, 29 46, 31 62 M 41 11 C 42 28, 43 48, 43 66 M 54 15 C 55 28, 56 44, 55 60 M 17 28 C 32 27, 50 26, 64 27 M 15 42 C 32 41, 50 40, 66 40 M 21 55 C 34 54, 48 53, 60 53"/>
-            <path class="sk" pathLength="1" style="animation-delay:2.0s;animation-duration:.3s" d="M 37 69 C 35 82, 33 95, 31 112 M 44 68 C 42 82, 40 96, 38 112 M 31 112 C 33 115, 36 115, 38 112"/>
+        <svg class="scribble lg" style="top:11%; left:5.5%; width:82px; transform:rotate(-12deg);" viewBox="0 0 90 130" aria-hidden="true">
+            <path class="sk" pathLength="1" style="animation-delay:1.4s;animation-duration:.5s" d="M 45 6 C 62 6, 73 20, 72 38 C 71 58, 60 70, 45 70 C 30 70, 19 58, 18 38 C 17 20, 28 6, 45 6 Z"/>
+            <path class="sk" pathLength="1" style="animation-delay:1.7s;animation-duration:.45s" d="M 33 13 C 33 28, 33 46, 34 64 M 45 8 C 45 26, 45 48, 45 69 M 57 13 C 57 28, 57 46, 56 64 M 20 26 C 36 25, 54 25, 70 26 M 18 38 C 36 37, 54 37, 71 38 M 20 51 C 36 50, 54 50, 69 51"/>
+            <path class="sk" pathLength="1" style="animation-delay:2.0s;animation-duration:.4s" d="M 36 68 C 38 76, 40 80, 41 86 M 54 68 C 52 76, 50 80, 49 86 M 41 86 L 40 103 M 49 86 L 50 103 M 38 103 L 37 124 M 52 103 L 53 124 M 37 124 C 42 127, 48 127, 53 124 M 38 110 L 52 109 M 37.5 117 L 52.5 116"/>
+            <path class="sk" pathLength="1" style="animation-delay:2.25s;animation-duration:.3s" d="M 72 92 C 77 92, 81 96, 81 101 C 81 106, 77 110, 72 110 C 67 110, 63 106, 63 101 C 63 96, 67 92, 72 92 Z M 67 94 C 70 98, 70 104, 67 108"/>
         </svg>
-        <svg class="scribble" style="top:15%; right:8%; width:88px; transform:rotate(6deg);" viewBox="0 0 92 72" aria-hidden="true">
-            <path class="sk" pathLength="1" style="animation-delay:2.2s;animation-duration:.5s" d="M 32 8 C 54 0, 80 10, 86 28 C 90 44, 76 58, 56 62 C 36 66, 12 60, 8 44 C 5 32, 14 14, 32 8 Z"/>
-            <path class="sk" pathLength="1" style="animation-delay:2.5s;animation-duration:.2s" d="M 24 40 C 24 34, 32 34, 32 40 C 32 45, 24 45, 24 40"/>
-            <path class="sk" pathLength="1" style="animation-delay:2.65s;animation-duration:.3s" d="M 46 18 C 50 15, 53 19, 50 22 C 47 24, 44 21, 46 18 M 63 24 C 67 21, 70 25, 67 28 C 64 30, 61 27, 63 24 M 66 42 C 70 39, 73 43, 70 46 C 67 48, 63 45, 66 42 M 48 47 C 52 44, 55 48, 52 51 C 49 53, 45 50, 48 47"/>
+        <svg class="scribble" style="top:12%; right:6%; width:110px; transform:rotate(3deg);" viewBox="0 0 120 100" aria-hidden="true">
+            <path class="sk" pathLength="1" style="animation-delay:2.4s;animation-duration:.5s" d="M 40 10 C 62 3, 88 8, 97 24 C 101 32, 100 42, 93 50 C 84 42, 74 41, 66 58 C 52 66, 30 64, 17 52 C 6 41, 9 22, 23 14 C 29 11, 34 11, 40 10 Z"/>
+            <path class="sk" pathLength="1" style="animation-delay:2.7s;animation-duration:.25s" d="M 39 44 C 39 39, 52 38, 53 43 C 54 49, 40 50, 39 44"/>
+            <path class="sk" pathLength="1" style="animation-delay:2.85s;animation-duration:.3s;stroke-width:5.5" d="M 27 22 C 27 18, 33 18, 33 22 C 33 26, 27 26, 27 22 Z M 41 15 C 41 11, 47 11, 47 15 C 47 19, 41 19, 41 15 Z M 56 13 C 56 9, 62 9, 62 13 C 62 17, 56 17, 56 13 Z M 71 16 C 71 12, 77 12, 77 16 C 77 20, 71 20, 71 16 Z M 83 25 C 83 21, 89 21, 89 25 C 89 29, 83 29, 83 25 Z"/>
+            <path class="sk" pathLength="1" style="animation-delay:3.05s;animation-duration:.4s" d="M 114 55 L 94 75 M 91 72 L 97 78 M 88 75 L 94 81 M 88 75 C 83 81, 79 88, 76 94 C 80 89, 86 84, 94 81"/>
         </svg>
-        <svg class="scribble lg" style="bottom:14%; left:8%; width:92px;" viewBox="0 0 92 66" aria-hidden="true">
-            <path class="sk" pathLength="1" style="animation-delay:2.8s;animation-duration:.35s" d="M 8 56 C 30 54, 58 54, 80 56 L 80 45 C 58 43, 30 43, 8 45 Z M 15 45 L 15 55"/>
-            <path class="sk" pathLength="1" style="animation-delay:3.0s;animation-duration:.35s" d="M 13 44 C 36 42, 62 42, 84 44 L 84 33 C 62 31, 36 31, 13 33 Z M 75 33 L 75 43"/>
-            <path class="sk" pathLength="1" style="animation-delay:3.2s;animation-duration:.35s" d="M 20 32 C 38 29, 56 29, 73 30 L 72 20 C 55 18, 38 19, 21 22 Z M 62 19 L 62 12"/>
+        <svg class="scribble lg" style="bottom:13%; left:7.5%; width:96px;" viewBox="0 0 100 78" aria-hidden="true">
+            <path class="sk" pathLength="1" style="animation-delay:3.15s;animation-duration:.35s" d="M 12 74 C 36 72, 64 72, 88 74 L 88 61 C 64 59, 36 59, 12 61 Z M 20 61.3 L 20 73.5 M 83 62 L 83 72 M 85.5 62.3 L 85.5 72.3"/>
+            <path class="sk" pathLength="1" style="animation-delay:3.35s;animation-duration:.35s" d="M 17 59 C 42 57, 66 57, 90 59 L 90 47 C 66 45, 42 45, 17 47 Z M 81 46.5 L 81 58.5 M 21 48 L 21 57 M 23.5 48.3 L 23.5 57.3"/>
+            <path class="sk" pathLength="1" style="animation-delay:3.55s;animation-duration:.35s" d="M 24 45 C 42 41, 60 39.5, 78 41 L 76 30 C 59 28.5, 42 30, 26 34 Z M 61 30 L 61 18 M 61 18 L 64.5 21 L 68 17 M 68 17 L 68 29"/>
         </svg>
-        <svg class="scribble lg" style="top:57%; right:6%; width:106px;" viewBox="0 0 110 70" aria-hidden="true">
-            <path class="sk" pathLength="1" style="animation-delay:3.35s;animation-duration:.45s" d="M 30 34 L 96 10 L 66 52 L 54 40 Z M 96 10 L 54 40"/>
-            <path class="sk" pathLength="1" style="animation-delay:3.6s;animation-duration:.35s" d="M 44 52 C 34 60, 22 62, 12 56 M 26 44 C 20 48, 14 48, 10 45"/>
+        <svg class="scribble lg" style="top:56%; right:5.5%; width:112px;" viewBox="0 0 120 80" aria-hidden="true">
+            <path class="sk" pathLength="1" style="animation-delay:3.75s;animation-duration:.45s" d="M 18 46 L 104 12 L 70 64 L 60 47 Z M 104 12 L 60 47"/>
+            <path class="sk" pathLength="1" style="animation-delay:4.05s;animation-duration:.35s" d="M 48 64 C 38 72, 26 74, 15 68 M 34 54 C 27 58, 20 58, 14 55 M 52 72 C 46 76, 40 76, 36 73"/>
         </svg>
-
         <!-- visitor drawing layer -->
         <canvas id="draw-canvas"></canvas>
 
@@ -529,16 +531,34 @@
                 <h2 class="section-title">Projects.<svg class="title-spark" viewBox="0 0 36 24" aria-hidden="true"><path class="sk" pathLength="1" style="animation-delay:.6s" d="M 6 20 L 2 12 M 18 14 L 18 2 M 30 20 L 34 12"/></svg></h2>
             </div>
 
-            <div class="subtab-bar reveal d1">
-                <button class="subtab active" data-filter="design">Design</button>
-                <button class="subtab" data-filter="dev">Development</button>
-                <button class="subtab" data-filter="case">Case Analysis</button>
-            </div>
-
             <div class="projects-grid" id="projects-grid">
 
+                <!-- A.X K1 Agent Demo -->
+                <article class="project-card reveal" data-cat="dev">
+                    <a href="k1_demo.html" class="card-link" aria-label="Open A.X K1 Agent Demo"></a>
+                    <div class="project-thumb" style="background:#000;display:flex;align-items:center;justify-content:center;"><div style="position:absolute;top:14px;right:16px;display:flex;align-items:flex-end;gap:9px;z-index:2;"><img src="img/rebellions_logo_dark.png" alt="Rebellions" style="width:auto;height:13px;"><span style="color:#777;font-family:monospace;font-size:9px;line-height:1.4;">×</span><img src="img/skt_logo.png" alt="SK telecom" style="width:auto;height:17px;"></div><div style="font-family:Helvetica,Arial,sans-serif;font-weight:800;font-size:clamp(1.05rem,1.9vw,1.5rem);color:#fff;letter-spacing:-.02em;">A.X K1 Agent Demo</div></div>
+                    <div class="project-body">
+                        <div class="project-meta"><span class="cat-label">AI Engineering</span><span class="date">2026 · Internship</span></div>
+                        <h3 class="project-name">A.X K1 Agent Demo <span class="arrow">↗</span></h3>
+                        <p class="project-desc">A live map-based AI agent serving SK Telecom's 519B-parameter A.X K1 model on a single Rebellions RebelServer (8 NPUs), built during my internship at Rebellions. K1 plans and calls tools in parallel, and every recommended place is verified against live TMAP data: zero hallucinated venues. Featured in the official Rebellions × SKT announcement.</p>
+                        <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">vLLM</span><span class="stack-tag">Agentic AI</span><span class="stack-tag">TMAP API</span><span class="stack-tag">NPU Serving</span></div>
+                    </div>
+                </article>
+
+                <!-- Tastemark -->
+                <article class="project-card reveal d1" data-cat="dev">
+                    <a href="tastemark.html" target="_blank" rel="noopener" class="card-link" aria-label="Open Tastemark"></a>
+                    <div class="project-thumb"><img alt="Tastemark" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Crect width='640' height='400' fill='%23f7f4ea'/%3E%3Cg fill='none' stroke='%232b3cc4' stroke-width='2'%3E%3Cpath d='M150 200 C 200 200 210 110 260 110 M150 200 C 200 200 210 200 260 200 M150 200 C 200 200 210 290 260 290' opacity='.35'/%3E%3Cpath d='M340 200 C 390 200 400 120 450 120 M340 200 C 390 200 400 200 450 200 M340 200 C 390 200 400 280 450 280' opacity='.35'/%3E%3C/g%3E%3Cg font-family='monospace' font-size='13' %3E%3Crect x='70' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='260' y='80' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='260' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='260' y='260' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='450' y='90' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='450' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='450' y='250' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3C/g%3E%3Cg fill='%232b3cc4'%3E%3Ccircle cx='90' cy='190' r='6'/%3E%3Ccircle cx='280' cy='190' r='6'/%3E%3Ccircle cx='470' cy='190' r='6'/%3E%3Ccircle cx='280' cy='100' r='6' opacity='.4'/%3E%3Ccircle cx='470' cy='110' r='6' opacity='.4'/%3E%3C/g%3E%3Ctext x='70' y='362' font-family='monospace' font-size='17' fill='%232b3cc4' letter-spacing='3'%3E%E2%9C%A6 EVERY FORK. EVERY KILL. EVERY REASON.%3C/text%3E%3C/svg%3E"></div>
+                    <div class="project-body">
+                        <div class="project-meta"><span class="cat-label">Web App</span><span class="date">July 2026</span></div>
+                        <h3 class="project-name">Tastemark <span class="arrow">↗</span></h3>
+                        <p class="project-desc">Version control for design decisions. AI generates the variants — you curate, and you can't advance without stating why. Every session becomes a shareable decision tree with a rejection gallery and an AI that argues back. Built for the era where the thinking is the job. Click to use the live tool.</p>
+                        <div class="project-stack"><span class="stack-tag">JavaScript</span><span class="stack-tag">Generative UI</span><span class="stack-tag">SVG</span><span class="stack-tag">Claude API</span></div>
+                    </div>
+                </article>
+
                 <!-- Sori.ai -->
-                <article class="project-card reveal" data-cat="design">
+                <article class="project-card reveal d2" data-cat="design">
                     <a href="sori.html" class="card-link" aria-label="Open Sori.ai"></a>
                     <div class="project-thumb"><img src="img/Lifelogging_Cover.png" alt="Sori.ai"></div>
                     <div class="project-body">
@@ -550,7 +570,7 @@
                 </article>
 
                 <!-- Subly -->
-                <article class="project-card reveal d1" data-cat="design">
+                <article class="project-card reveal d3" data-cat="design">
                     <a href="subly.html" class="card-link" aria-label="Open Subly"></a>
                     <div class="project-thumb"><img src="img/Subly_Cover.png" alt="Subly"></div>
                     <div class="project-body">
@@ -561,20 +581,8 @@
                     </div>
                 </article>
 
-                <!-- Tastemark -->
-                <article class="project-card reveal" data-cat="dev">
-                    <a href="tastemark.html" target="_blank" rel="noopener" class="card-link" aria-label="Open Tastemark"></a>
-                    <div class="project-thumb"><img alt="Tastemark" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Crect width='640' height='400' fill='%23f7f4ea'/%3E%3Cg fill='none' stroke='%232b3cc4' stroke-width='2'%3E%3Cpath d='M150 200 C 200 200 210 110 260 110 M150 200 C 200 200 210 200 260 200 M150 200 C 200 200 210 290 260 290' opacity='.35'/%3E%3Cpath d='M340 200 C 390 200 400 120 450 120 M340 200 C 390 200 400 200 450 200 M340 200 C 390 200 400 280 450 280' opacity='.35'/%3E%3C/g%3E%3Cg font-family='monospace' font-size='13' %3E%3Crect x='70' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='260' y='80' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='260' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='260' y='260' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='450' y='90' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3Crect x='450' y='170' width='80' height='60' rx='9' fill='%23fffdf6' stroke='%231d9a6c' stroke-width='3'/%3E%3Crect x='450' y='250' width='80' height='60' rx='9' fill='none' stroke='%232b3cc4' stroke-width='2' stroke-dasharray='5 5' opacity='.5'/%3E%3C/g%3E%3Cg fill='%232b3cc4'%3E%3Ccircle cx='90' cy='190' r='6'/%3E%3Ccircle cx='280' cy='190' r='6'/%3E%3Ccircle cx='470' cy='190' r='6'/%3E%3Ccircle cx='280' cy='100' r='6' opacity='.4'/%3E%3Ccircle cx='470' cy='110' r='6' opacity='.4'/%3E%3C/g%3E%3Ctext x='70' y='362' font-family='monospace' font-size='17' fill='%232b3cc4' letter-spacing='3'%3E%E2%9C%A6 EVERY FORK. EVERY KILL. EVERY REASON.%3C/text%3E%3C/svg%3E"></div>
-                    <div class="project-body">
-                        <div class="project-meta"><span class="cat-label">Web App</span><span class="date">July 2026</span></div>
-                        <h3 class="project-name">Tastemark <span class="arrow">↗</span></h3>
-                        <p class="project-desc">Version control for design decisions. AI generates the variants — you curate, and you can't advance without stating why. Every session becomes a shareable decision tree with a rejection gallery and an AI that argues back. Built for the era where the thinking is the job. Click to use the live tool.</p>
-                        <div class="project-stack"><span class="stack-tag">JavaScript</span><span class="stack-tag">Generative UI</span><span class="stack-tag">SVG</span><span class="stack-tag">Claude API</span></div>
-                    </div>
-                </article>
-
                 <!-- Trojan Trade -->
-                <article class="project-card reveal" data-cat="dev">
+                <article class="project-card reveal d3" data-cat="dev">
                     <a href="#" class="card-link" aria-label="Preview Trojan Trade" onclick="openModal('trojan-trade-modal'); return false;"></a>
                     <div class="project-thumb"><img src="img/Trojan_Trade_Background.png" alt="Trojan Trade"></div>
                     <div class="project-body">
@@ -631,64 +639,61 @@
         return { show };
     })();
 
-    /* HEADLINE WRITER: the headline inks in letter by letter */
+    /* HEADLINE WRITER: words soak in like ink on paper */
     (function () {
         const h1 = document.getElementById('hero-headline');
         const heroPanel = document.getElementById('hero');
         if (!h1) return;
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        // wrap every letter in a .ch span (leave svgs and the pencil alone);
-        // mark word boundaries structurally so pacing never depends on layout
-        let pendingGap = false;
+        // wrap each word in a .wd span (a hand-mark counts as one word)
         (function wrap(node) {
             [...node.childNodes].forEach(n => {
                 if (n.nodeType === 3) {
                     const frag = document.createDocumentFragment();
-                    for (const ch of n.textContent) {
-                        if (ch.trim() === '') { pendingGap = true; frag.append(ch); continue; }
-                        const s = document.createElement('span');
-                        s.className = 'ch';
-                        s.textContent = ch;
-                        if (pendingGap) { s.dataset.g = 'w'; pendingGap = false; }
-                        frag.append(s);
+                    for (const part of n.textContent.split(/(\s+)/)) {
+                        if (!part) continue;
+                        if (/^\s+$/.test(part)) { frag.append(part); continue; }
+                        const w = document.createElement('span');
+                        w.className = 'wd';
+                        w.textContent = part;
+                        frag.append(w);
                     }
                     n.replaceWith(frag);
                 } else if (n.nodeType === 1 && n.tagName.toLowerCase() !== 'svg') {
-                    wrap(n);
+                    if (n.classList.contains('hand-mark')) n.classList.add('wd');
+                    else wrap(n);
                 }
             });
         })(h1);
-        // first letter of each subsequent line = line hop
+        // first word of each subsequent line pauses a beat longer
         [...h1.querySelectorAll('.hn-line')].forEach((line, li) => {
-            const first = line.querySelector('.ch');
+            const first = line.querySelector('.wd');
             if (li > 0 && first) first.dataset.g = 'l';
         });
 
-        const letters = [...h1.querySelectorAll('.ch')];
+        const words = [...h1.querySelectorAll('.wd')];
 
         function write() {
-            letters.forEach(l => { l.style.animation = 'none'; l.classList.remove('on'); });
+            words.forEach(w => { w.style.animation = 'none'; });
             if (!heroPanel.classList.contains('active')) return;
-            if (reduce) { letters.forEach(l => l.classList.add('on')); return; }
-            void h1.offsetWidth;   // flush the reset so animations restart
-
-            // human-ish rhythm: quick letters, lifts between words, a hop between lines
-            let t = 150;
-            const times = letters.map(l => {
-                if (l.dataset.g === 'l') t += 170;
-                else if (l.dataset.g === 'w') t += 65;
-                const at = t;
-                t += 26 + Math.random() * 20;
-                return at;
+            if (reduce) return;               // CSS override shows everything
+            void h1.offsetWidth;              // flush the reset so animations restart
+            let t = 300, prev = 300;
+            words.forEach(w => {
+                let at;
+                if (/^[^\w]+$/.test(w.textContent)) at = prev;   // bare punctuation rides with the previous word
+                else {
+                    if (w.dataset.g === 'l') t += 200;            // breath at the line break
+                    at = t; t += 140;
+                }
+                prev = at;
+                w.style.animation = `soakIn .8s cubic-bezier(.22,1,.36,1) ${at}ms forwards`;
             });
-
-            // letters reveal on the CSS animation clock (immune to timer throttling)
-            letters.forEach((l, i) => { l.style.animation = `chOn 45ms linear ${times[i]}ms forwards`; });
         }
 
         window.__writeHeadline = write;
-        setTimeout(write, 380);
+        setTimeout(write, 300);
     })();
 
     /* flowing background line draws once */
@@ -782,31 +787,6 @@
         addEventListener('resize', syncSize);
         window.__sizeDraw = syncSize;
         syncSize();
-    })();
-
-    /* PROJECT SUBTABS */
-    (function () {
-        const tabs = document.querySelectorAll('.subtab');
-        const grid = document.getElementById('projects-grid');
-        const cards = [...grid.querySelectorAll('.project-card')];
-        let emptyNode = null;
-        function apply(f) {
-            let shown = 0;
-            cards.forEach(c => { const m = c.dataset.cat === f; c.style.display = m ? '' : 'none'; if (m) shown++; });
-            if (emptyNode) { emptyNode.remove(); emptyNode = null; }
-            if (shown === 0) {
-                emptyNode = document.createElement('div');
-                emptyNode.className = 'empty-state';
-                emptyNode.innerHTML = '<p>No projects here yet. Check back soon!</p>';
-                grid.appendChild(emptyNode);
-            }
-        }
-        tabs.forEach(t => t.addEventListener('click', () => {
-            tabs.forEach(x => x.classList.remove('active'));
-            t.classList.add('active');
-            apply(t.dataset.filter);
-        }));
-        apply('design');
     })();
 
     /* MODAL */

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christine Jeong | A.X K1 × RebelServer Map-Based AI Agent Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf6ec;
+            --bg-soft: #f4efe2;
+            --surface: #fffdf6;
+            --surface-2: #f4efe2;
+            --text: #1e2a80;
+            --muted: #5560bd;
+            --line: rgba(43,60,196,0.16);
+            --c1: #2b3cc4;
+            --c2: #2b3cc4;
+            --c3: #2b3cc4;
+            --accent: #2b3cc4;
+            --grad: linear-gradient(120deg, #2b3cc4 0%, #3d4fd8 100%);
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        /* Unified CSS for all project pages */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('https://fonts.cdnfonts.com/s/67108/Satoshi-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            padding-top: 80px; /* Account for fixed navbar */
+        }
+
+        /* Unified Navigation (matches home page) */
+        #navbar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 44px;
+            z-index: 1000;
+            height: 72px;
+            background: rgba(250, 246, 236, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
+        }
+        .nav-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            display: flex; align-items: center; gap: 9px;
+        }
+        .nav-logo .mark {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+        @keyframes pulse { 0%,100%{ transform: scale(1); opacity:1 } 50%{ transform: scale(1.35); opacity:.7 } }
+
+        #top-menu {
+            display: flex;
+            list-style: none;
+            gap: 34px;
+            align-items: center;
+        }
+        #navbar a { text-decoration: none; }
+        #navbar a.nav-link {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--muted);
+            position: relative;
+            padding: 6px 0;
+            transition: color 0.3s ease;
+        }
+        #navbar a.nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.35s var(--ease);
+        }
+        #navbar a.nav-link:hover, #navbar a.nav-link.active { color: var(--text); }
+        #navbar a.nav-link:hover::after, #navbar a.nav-link.active::after { transform: scaleX(1); }
+
+        .nav-cta {
+            font-family: var(--font-body);
+            padding: 9px 18px;
+            border-radius: 100px;
+            background: var(--accent);
+            color: #faf6ec !important;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 6px 22px rgba(43, 60, 196, 0.25);
+            transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+        }
+        .nav-cta::after { display: none; }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(43, 60, 196, 0.4); }
+
+        /* Project Header */
+        .project-header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .project-title {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text);
+            line-height: 1.1;
+        }
+
+        .project-subtitle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        /* Project Cover Image */
+        .project-cover {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 60px;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(43, 60, 196, 0.15);
+        }
+
+        /* Project Details Grid */
+        .project-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto 80px;
+            padding: 0 20px;
+        }
+
+        .detail-card {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .detail-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .detail-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--muted);
+        }
+
+        /* Project Content Sections */
+        .project-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        .content-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: var(--text);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--c2);
+            display: inline-block;
+        }
+
+        .section-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        .section-text strong {
+            color: var(--accent);
+        }
+
+        .section-list {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+            justify-content: center;
+        }
+
+        .gallery-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(43, 60, 196, 0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-image:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-image.small {
+            max-width: 300px;
+        }
+
+        /* screen recordings: crop out the baked-in phone frame, show just the screen */
+        .phone-rec {
+            width: min(280px, 72vw);
+            clip-path: inset(var(--crop-y, 3.4%) var(--crop-x, 6.4%) round 22px);
+        }
+
+        /* Video Styling */
+        .project-video {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            border-radius: 8px;
+            margin: 30px auto;
+            display: block;
+        }
+
+        /* Back to Projects Link */
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            border: 1px solid var(--c2);
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            background: var(--grad);
+            color: #faf6ec;
+            border-color: transparent;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .project-title {
+                font-size: 2.5rem;
+            }
+            
+            .project-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .project-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 1.7rem;
+            }
+            
+            .project-video {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .project-title {
+                font-size: 2rem;
+            }
+            
+            .project-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            #top-menu {
+                gap: 20px;
+            }
+            
+            #navbar { padding: 14px 20px; }
+            .nav-link { font-size: 14px; }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* K1 page diagrams */
+        .diagram { width: 100%; height: auto; display: block; margin: 26px 0 8px; }
+        .diagram .bx { fill: var(--surface); stroke: var(--accent); stroke-width: 1.8; rx: 10; }
+        .diagram .bx-soft { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+        .diagram .bx-final { fill: rgba(29,154,108,.07); stroke: #1d9a6c; stroke-width: 2.2; }
+        .diagram .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; fill: var(--text); }
+        .diagram .sub { font-family: 'Inter', sans-serif; font-size: 12.5px; fill: var(--muted); }
+        .diagram .tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; fill: var(--accent); }
+        .diagram .ar { stroke: var(--accent); stroke-width: 1.8; fill: none; }
+        .diagram .ar-d { stroke: var(--accent); stroke-width: 1.8; fill: none; stroke-dasharray: 6 5; opacity: .75; }
+        .diagram .cap { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: .08em; fill: var(--muted); }
+        .diagram .ar-d { animation: dgFlow 1s linear infinite; }
+        @keyframes dgFlow { to { stroke-dashoffset: -11; } }
+        .diagram .pl { animation: dgPulse 7.5s ease-in-out infinite; }
+        @keyframes dgPulse {
+            0%, 11%, 100% { }
+            4%, 7% { stroke: #1d9a6c; stroke-width: 3.2; }
+        }
+        .diagram-note { font-family: var(--font-display); font-size: .8rem; color: var(--muted); text-align: center; margin: 0 0 34px; }
+    
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a class="nav-logo" href="portfolio.html"><span class="mark">✳</span><span class="full">Christine&nbsp;Jeong</span></a>
+        <ul id="top-menu">
+            <li><a class="nav-link" href="portfolio.html#about">About</a></li>
+            <li><a class="nav-link active" href="portfolio.html#projects">Projects</a></li>
+            <li><a class="nav-cta" href="mailto:yunseojeong0607@gmail.com">Let's talk</a></li>
+        </ul>
+    </nav>
+
+    <!-- Project Header -->
+    <section class="project-header">
+        <h1 class="project-title">A.X K1 × RebelServer™<br>Map-Based AI Agent Demo</h1>
+        <p class="project-subtitle">A 519B frontier model served on a single domestic NPU server, and a real, working service running live on top of it</p>
+    </section>
+
+    <!-- Project Cover -->
+    <div class="project-cover" style="height:auto;aspect-ratio:2.5/1;background:#000;border:none;position:relative;display:flex;align-items:center;justify-content:center;">
+        <div style="position:absolute;top:18px;right:22px;display:flex;align-items:flex-end;gap:10px;">
+            <img src="img/rebellions_logo_dark.png" alt="Rebellions" style="width:auto;height:16px;">
+            <span style="color:#777;font-family:monospace;font-size:11px;line-height:1.4;">×</span>
+            <img src="img/skt_logo.png" alt="SK telecom" style="width:auto;height:21px;">
+        </div>
+        <div style="font-family:Helvetica,Arial,sans-serif;font-weight:800;font-size:clamp(1.6rem,3.4vw,2.5rem);color:#fff;letter-spacing:-.02em;">A.X K1 Agent Demo</div>
+    </div>
+
+    <!-- Project Details -->
+    <div class="project-details">
+        <div class="detail-card">
+            <div class="detail-title">Timeline</div>
+            <div class="detail-content">2026<br>Rebellions Internship</div>
+        </div>
+        <div class="detail-card">
+            <div class="detail-title">Role</div>
+            <div class="detail-content">AI Engineering Intern<br>(demo designed &amp; built end-to-end)</div>
+        </div>
+        <div class="detail-card">
+            <div class="detail-title">Stack</div>
+            <div class="detail-content">Python (stdlib only) · vLLM<br>TMAP API · Vanilla JS/SVG</div>
+        </div>
+        <div class="detail-card">
+            <div class="detail-title">Partnership</div>
+            <div class="detail-content">Rebellions × SK Telecom<br>(official announcement)</div>
+        </div>
+    </div>
+
+    <!-- Project Content -->
+    <div class="project-content">
+        <div class="content-section">
+            <h2 class="section-title">Overview</h2>
+            <p class="section-text">
+                A live demo that serves SK Telecom's sovereign large language model, <strong>A.X K1, 519 billion parameters (MoE)</strong>, on a <strong>single RebelServer™ with 8 RebelCard™ NPUs</strong>, and runs a real, working map-based AI agent on top of it.
+            </p>
+            <p class="section-text">
+                The goal was to prove that "one domestic NPU server can run a frontier-scale model", not with benchmark tables, but with a <strong>living service</strong>: multiple users simultaneously ask everyday questions like <em>"Where's a well-reviewed dermatologist in Mok-dong?"</em>, and the audience watches K1 reason, call tools, find real places, and pin them on a map in real time.
+            </p>
+            <ul class="section-list">
+                <li><strong>Agentic, not canned</strong>, the model plans, calls tools, and verifies results on its own.</li>
+                <li><strong>Zero hallucinated venues</strong>, every place in an answer is verified against the live TMAP API before it can appear.</li>
+                <li><strong>Every number on screen is measured</strong>, response times, token counts, NPU utilization. No fake data.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Why, and How</h2>
+            <p class="section-text">
+                <strong>Why I built it.</strong> I was interning at Rebellions when the Rebellions × SK Telecom collaboration was announced. The claim, "a frontier-scale model runs on one domestic NPU server," existed as benchmark numbers. What it needed was something an audience could watch working. This demo turned the claim into a live service.
+            </p>
+            <p class="section-text">
+                I chose a map agent on purpose: I wanted the demo to live inside everyone's daily life, not in a benchmark table. Finding a hospital or a pharmacy that is still open late on a weekend night is genuinely hard and time-consuming. This answers it in seconds, with real, verified places pinned on a map.
+            </p>
+            <p class="section-text">
+                <strong>What it's made of.</strong> The backend is one dependency-free <strong>Python</strong> file: stdlib HTTP server and threads, streaming from K1 through <strong>vLLM</strong>'s OpenAI-compatible API, grounding against the <strong>TMAP REST API</strong>, and reading NPU utilization from rbln-smi. The front end is vanilla <strong>HTML/CSS/JS</strong> with hand-rolled SVG for the live graphs. No frameworks, so it runs anywhere Python runs.
+            </p>
+            <p class="section-text">
+                <strong>Where AI helped, honestly.</strong> I used Claude for UI scaffolding and refactoring passes on the server plumbing. The parts that make the demo trustworthy are the parts I designed and iterated myself: the agent-loop prompt rules, the TMAP grounding pipeline, the reliability guards, the 70-question bank, and the "every number is measured" principle, all tuned against live failures on real hardware.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">At a Glance</h2>
+            <ul class="section-list">
+                <li><strong>Model</strong>, A.X K1 · 519B parameters · Mixture-of-Experts</li>
+                <li><strong>Infrastructure</strong>, 1× RebelServer™ · 8× RebelCard™ (DP8 + Expert Parallel, vLLM)</li>
+                <li><strong>Concurrency</strong>, 8 in-flight requests, ~5 s average response (measured live)</li>
+                <li><strong>Reliability</strong>, 0 hallucinated venues; a hand-crafted 70-question bank drives demo traffic</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">System Architecture</h2>
+            <p class="section-text">
+                A dependency-free Python server sits between the browser and the model: it orchestrates the agent loop, streams from K1 through an OpenAI-compatible API, grounds answers in TMAP data, and collects per-request metrics that the dashboard renders live.
+            </p>
+            <svg class="diagram" viewBox="0 0 920 470" role="img" aria-label="System architecture">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="context-stroke" stroke-width="1.8"/></marker></defs>
+<rect class="bx" x="140" y="16" width="640" height="74" rx="12"/>
+<text class="lbl" x="460" y="46" text-anchor="middle">BROWSER</text>
+<text class="sub" x="460" y="68" text-anchor="middle">service screen (map · live feed) + processing dashboard (agent-loop graph)</text>
+<path class="ar" d="M 460 90 L 460 128" marker-end="url(#ah)"/>
+<text class="cap" x="480" y="115" text-anchor="start">POLLING · &lt;1s</text>
+<rect class="bx" x="90" y="132" width="740" height="128" rx="12"/>
+<text class="lbl" x="460" y="160" text-anchor="middle">DEMO SERVER · PYTHON</text>
+<rect class="bx-soft" x="115" y="176" width="165" height="62" rx="9"/>
+<text class="sub" x="197" y="202" text-anchor="middle">Agent</text><text class="sub" x="197" y="220" text-anchor="middle">orchestrator</text>
+<rect class="bx-soft" x="292" y="176" width="165" height="62" rx="9"/>
+<text class="sub" x="374" y="202" text-anchor="middle">K1 client</text><text class="sub" x="374" y="220" text-anchor="middle">(streaming, per-req metrics)</text>
+<rect class="bx-soft" x="469" y="176" width="165" height="62" rx="9"/>
+<text class="sub" x="551" y="202" text-anchor="middle">TMAP client</text><text class="sub" x="551" y="220" text-anchor="middle">(grounding · pin verify)</text>
+<rect class="bx-soft" x="646" y="176" width="160" height="62" rx="9"/>
+<text class="sub" x="726" y="202" text-anchor="middle">Metrics</text><text class="sub" x="726" y="220" text-anchor="middle">(NPU utilization)</text>
+<path class="ar" d="M 460 260 L 460 300" marker-end="url(#ah)"/>
+<text class="cap" x="480" y="286" text-anchor="start">OPENAI-COMPATIBLE STREAMING</text>
+<rect class="bx" x="140" y="304" width="640" height="146" rx="12"/>
+<text class="lbl" x="460" y="334" text-anchor="middle">A.X K1 · 519B MoE, vLLM on 1× RebelServer™</text>
+<g><rect class="bx-soft" x="175" y="352" width="58" height="58" rx="8"/><text class="tag" x="204" y="385" text-anchor="middle">R1</text><rect class="bx-soft" x="247" y="352" width="58" height="58" rx="8"/><text class="tag" x="276" y="385" text-anchor="middle">R2</text><rect class="bx-soft" x="319" y="352" width="58" height="58" rx="8"/><text class="tag" x="348" y="385" text-anchor="middle">R3</text><rect class="bx-soft" x="391" y="352" width="58" height="58" rx="8"/><text class="tag" x="420" y="385" text-anchor="middle">R4</text><rect class="bx-soft" x="463" y="352" width="58" height="58" rx="8"/><text class="tag" x="492" y="385" text-anchor="middle">R5</text><rect class="bx-soft" x="535" y="352" width="58" height="58" rx="8"/><text class="tag" x="564" y="385" text-anchor="middle">R6</text><rect class="bx-soft" x="607" y="352" width="58" height="58" rx="8"/><text class="tag" x="636" y="385" text-anchor="middle">R7</text><rect class="bx-soft" x="679" y="352" width="58" height="58" rx="8"/><text class="tag" x="708" y="385" text-anchor="middle">R8</text></g>
+<text class="cap" x="460" y="436" text-anchor="middle">8× REBELCARD™ · DP8 + EXPERT PARALLEL</text>
+</svg>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Agentic Tool-Calling Loop</h2>
+            <p class="section-text">
+                The heart of the demo. Given a question, K1 emits tool calls as JSON, the server only parses, executes, and feeds results back. <strong>The model decides</strong> which tools to run and when it knows enough to answer. Round one always fans out in parallel, two K1 sub-inferences (<em>Explore</em>, <em>Verify</em>) plus a live TMAP search, so the dashboard's process graph shows genuine parallelism on real hardware.
+            </p>
+            <svg class="diagram" viewBox="-60 0 1040 640" role="img" aria-label="Agentic tool-calling loop">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="context-stroke" stroke-width="1.8"/></marker></defs>
+<rect class="bx-soft pl" style="animation-delay:.2s" x="235" y="14" width="450" height="54" rx="27"/>
+<text class="sub" x="460" y="38" text-anchor="middle">“Where’s a well-reviewed dermatologist in Mok-dong?”</text>
+<text class="tag" x="460" y="56" text-anchor="middle">QUESTION IN</text>
+<path class="ar" d="M 460 68 L 460 104" marker-end="url(#ah)"/>
+<rect class="bx pl" style="animation-delay:1s" x="285" y="108" width="350" height="72" rx="12"/>
+<text class="lbl" x="460" y="140" text-anchor="middle">K1 · DECIDE</text>
+<text class="sub" x="460" y="162" text-anchor="middle">plans its own tool calls, one JSON array per round</text>
+<path class="ar" d="M 380 180 C 320 205, 250 215, 195 236" marker-end="url(#ah)"/>
+<path class="ar" d="M 460 180 L 460 236" marker-end="url(#ah)"/>
+<path class="ar" d="M 540 180 C 600 205, 670 215, 725 236" marker-end="url(#ah)"/>
+<rect class="bx pl" style="animation-delay:2s" x="60" y="240" width="270" height="88" rx="12"/>
+<text class="tag" x="195" y="266" text-anchor="middle">k1_subtask</text>
+<text class="lbl" x="195" y="290" text-anchor="middle">EXPLORE</text>
+<text class="sub" x="195" y="312" text-anchor="middle">broad candidates · streamed sub-inference</text>
+<rect class="bx pl" style="animation-delay:2s" x="325" y="240" width="270" height="88" rx="12"/>
+<text class="tag" x="460" y="266" text-anchor="middle">k1_subtask</text>
+<text class="lbl" x="460" y="290" text-anchor="middle">VERIFY</text>
+<text class="sub" x="460" y="312" text-anchor="middle">what’s actually available right now</text>
+<rect class="bx pl" style="animation-delay:2s" x="590" y="240" width="270" height="88" rx="12"/>
+<text class="tag" x="725" y="266" text-anchor="middle">search_places</text>
+<text class="lbl" x="725" y="290" text-anchor="middle">TMAP POI SEARCH</text>
+<text class="sub" x="725" y="312" text-anchor="middle">real venue names &amp; addresses, live</text>
+<text class="cap" x="460" y="352" text-anchor="middle">RUNS IN PARALLEL · SPREAD ACROSS THE 8 NPU CARDS</text>
+<path class="ar" d="M 195 328 C 250 372, 330 384, 388 392" marker-end="url(#ah)"/>
+<path class="ar" d="M 460 328 L 460 384" marker-end="url(#ah)"/>
+<path class="ar" d="M 725 328 C 670 372, 590 384, 532 392" marker-end="url(#ah)"/>
+<rect class="bx-soft pl" style="animation-delay:3.3s" x="270" y="388" width="380" height="60" rx="12"/>
+<text class="lbl" x="460" y="414" text-anchor="middle" style="font-size:13.5px">RESULTS FEED BACK</text>
+<text class="sub" x="460" y="434" text-anchor="middle">each result re-enters the conversation as context</text>
+<path class="ar" d="M 460 448 L 460 484" marker-end="url(#ah)"/>
+<rect class="bx pl" style="animation-delay:4.2s" x="285" y="488" width="350" height="64" rx="12"/>
+<text class="lbl" x="460" y="516" text-anchor="middle">K1 · REASON, enough info?</text>
+<text class="sub" x="460" y="536" text-anchor="middle">the model decides, not the server</text>
+<path class="ar-d" d="M 285 522 C 40 510, -20 420, -18 320 C -16 210, 80 158, 280 144" marker-end="url(#ah)"/>
+<text class="cap" x="-44" y="330" text-anchor="middle" transform="rotate(-90 -44 330)">NOT YET → NEXT ROUND (MAX 6)</text>
+<path class="ar" d="M 460 552 L 460 584" marker-end="url(#ah)"/>
+<rect class="bx-final pl" style="animation-delay:6.2s" x="250" y="588" width="420" height="46" rx="23"/>
+<text class="lbl" x="460" y="616" text-anchor="middle" style="fill:#1d9a6c">FINAL ANSWER, only TMAP-verified venues</text>
+</svg>
+            <p class="diagram-note">animated to mirror the live dashboard: each stage lights up as the loop runs, and every step is recorded so any question's reasoning can be replayed</p>
+            <p class="section-text">
+                Reliability came from unglamorous engineering: a tool-name whitelist with variant normalization, duplicate-call detection that nudges the model to conclude, a one-retry format guard, a 6-round budget with a forced final answer, and a four-level graceful-degradation ladder that ends in a measured TMAP fallback, so the screen never shows a dead end.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Zero Hallucinated Venues</h2>
+            <p class="section-text">
+                LLMs love inventing plausible place names. The demo makes that structurally impossible:
+            </p>
+            <ul class="section-list">
+                <li><strong>Pre-grounding</strong>, the question's area is geocoded and nearby real POIs are injected into the prompt, with rules against vague endings and irrelevant venues.</li>
+                <li><strong>Answer verification</strong>, after generation, venue names are extracted from the answer and re-searched on TMAP; only places that exist (with coordinates) become map pins.</li>
+                <li><strong>Strict chip matching</strong>, a venue chip renders only if every distinctive token of the verified name appears in the answer text.</li>
+            </ul>
+            <p class="section-text">
+                <strong>Net effect: an unverified place cannot reach the screen.</strong> Zero hallucinated venues across hundreds of live queries.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Featured In</h2>
+            <ul class="section-list">
+                <li><a href="https://rebellions.ai/newsroom/rebelserver_run_k1/" target="_blank" rel="noopener">Rebellions Newsroom, RebelServer runs K1 (English)</a></li>
+                <li><a href="https://kr.rebellions.ai/newsroom/rebelserver_axk1_serving/" target="_blank" rel="noopener">Rebellions Newsroom (Korean)</a></li>
+                <li><a href="https://www.news1.kr/industry/sb-founded/6236407" target="_blank" rel="noopener">Press coverage, News1</a></li>
+                <li><a href="https://www.linkedin.com/posts/rebellions-ai_together-with-sk-telecom-weve-successfully-activity-7486439028268122113-sap8" target="_blank" rel="noopener">Rebellions official LinkedIn post</a></li>
+                <li><a href="https://www.youtube.com/watch?v=5xKviYHZJpc" target="_blank" rel="noopener">Demo video on YouTube</a></li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Takeaways</h2>
+            <ul class="section-list">
+                <li>Agent reliability is mostly <strong>prompt + parser engineering</strong>, whitelists, format guards, and duplicate detection mattered more than any single clever prompt.</li>
+                <li><strong>Grounding beats guessing</strong>: making hallucination structurally impossible is a design decision, not a model property.</li>
+                <li>A demo is a product, "every number is measured" was the principle that made the audience trust the rest.</li>
+            </ul>
+        </div>
+
+        <!-- Back to Projects Link -->
+        <a href="portfolio.html#projects" class="back-link">← Back to all projects</a>
+    </div>
+
+</body>
+</html>
