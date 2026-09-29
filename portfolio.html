@@ -538,7 +538,7 @@
                     <a href="k1_demo.html" class="card-link" aria-label="Open A.X K1 Agent Demo"></a>
                     <div class="project-thumb" style="background:#000;display:flex;align-items:center;justify-content:center;"><div style="position:absolute;top:14px;right:16px;display:flex;align-items:flex-end;gap:9px;z-index:2;"><img src="img/rebellions_logo_dark.png" alt="Rebellions" style="width:auto;height:13px;"><span style="color:#777;font-family:monospace;font-size:9px;line-height:1.4;">×</span><img src="img/skt_logo.png" alt="SK telecom" style="width:auto;height:17px;"></div><div style="font-family:Helvetica,Arial,sans-serif;font-weight:800;font-size:clamp(1.05rem,1.9vw,1.5rem);color:#fff;letter-spacing:-.02em;">A.X K1 Agent Demo</div></div>
                     <div class="project-body">
-                        <div class="project-meta"><span class="cat-label">AI Engineering</span><span class="date">2026 · Internship</span></div>
+                        <div class="project-meta"><span class="cat-label">AI Engineering</span><span class="date">June – August 2026 · Internship</span></div>
                         <h3 class="project-name">A.X K1 Agent Demo <span class="arrow">↗</span></h3>
                         <p class="project-desc">A live map-based AI agent serving SK Telecom's 519B-parameter A.X K1 model on a single Rebellions RebelServer (8 NPUs), built during my internship at Rebellions. K1 plans and calls tools in parallel, and every recommended place is verified against live TMAP data: zero hallucinated venues. Featured in the official Rebellions × SKT announcement.</p>
                         <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">vLLM</span><span class="stack-tag">Agentic AI</span><span class="stack-tag">TMAP API</span><span class="stack-tag">NPU Serving</span></div>
@@ -583,32 +583,19 @@
 
                 <!-- Trojan Trade -->
                 <article class="project-card reveal d3" data-cat="dev">
-                    <a href="#" class="card-link" aria-label="Preview Trojan Trade" onclick="openModal('trojan-trade-modal'); return false;"></a>
+                    <a href="trojan-trade.html" class="card-link" aria-label="Explore Trojan Trade"></a>
                     <div class="project-thumb"><img src="img/Trojan_Trade_Background.png" alt="Trojan Trade"></div>
                     <div class="project-body">
                         <div class="project-meta"><span class="cat-label">Web Development</span><span class="date">2024</span></div>
                         <h3 class="project-name">Trojan Trade <span class="arrow">↗</span></h3>
-                        <p class="project-desc">A React marketplace for USC students to buy &amp; sell on campus — live search, sorting, category filters, a likes/wishlist with a count badge, and a contact-the-poster flow. Click to launch the live build.</p>
-                        <div class="project-stack"><span class="stack-tag">React</span><span class="stack-tag">Vite</span><span class="stack-tag">Bootstrap</span></div>
+                        <p class="project-desc">A community marketplace for USC students to buy, sell, and rent preloved essentials. Explore campus finds, save favorites, and try creating a listing in an interactive demo designed for more affordable, circular student living.</p>
+                        <div class="project-stack"><span class="stack-tag">JavaScript</span><span class="stack-tag">Responsive UI</span><span class="stack-tag">Product Design</span></div>
                     </div>
                 </article>
 
             </div>
         </div>
     </section>
-
-    <!-- Trojan Trade Modal -->
-    <div id="trojan-trade-modal" class="modal">
-        <div class="modal-box">
-            <div class="modal-head">
-                <h3>Trojan Trade — Live Preview</h3>
-                <button class="modal-close" onclick="closeModal('trojan-trade-modal')">&times;</button>
-            </div>
-            <div style="flex:1;background:#fff;">
-                <iframe src="https://christinejeong.github.io/trojan-trade/dist/" title="Trojan Trade" style="width:100%;height:100%;border:none;"></iframe>
-            </div>
-        </div>
-    </div>
 
     <script>
     /* PANEL NAVIGATION (no scroll) */
@@ -789,11 +776,6 @@
         syncSize();
     })();
 
-    /* MODAL */
-    function openModal(id){ document.getElementById(id).style.display='flex'; }
-    function closeModal(id){ document.getElementById(id).style.display='none'; }
-    addEventListener('click', e => { document.querySelectorAll('.modal').forEach(m => { if (e.target===m) m.style.display='none'; }); });
-    addEventListener('keydown', e => { if (e.key==='Escape') closeModal('trojan-trade-modal'); });
     </script>
 </body>
 </html>
