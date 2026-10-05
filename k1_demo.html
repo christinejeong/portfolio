@@ -263,11 +263,15 @@
             clip-path: inset(var(--crop-y, 3.4%) var(--crop-x, 6.4%) round 22px);
         }
 
+        #final-demo-title { scroll-margin-top: 100px; }
+
         /* Video Styling */
         .project-video {
             width: 100%;
             max-width: 800px;
-            height: 450px;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            border: 0;
             border-radius: 8px;
             margin: 30px auto;
             display: block;
@@ -310,9 +314,7 @@
                 font-size: 1.7rem;
             }
             
-            .project-video {
-                height: 300px;
-            }
+
         }
 
         @media (max-width: 480px) {
@@ -549,6 +551,17 @@
                 <strong>Net effect: an unverified place cannot reach the screen.</strong> Zero hallucinated venues across hundreds of live queries.
             </p>
         </div>
+
+        <section class="content-section" aria-labelledby="final-demo-title">
+            <h2 class="section-title" id="final-demo-title">Final Demo</h2>
+            <iframe class="project-video"
+                src="https://www.youtube.com/embed/5xKviYHZJpc"
+                title="Final Demo — A.X K1 Agent Demo"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+            <p class="section-text"><a href="https://www.youtube.com/watch?v=5xKviYHZJpc" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
+        </section>
 
         <div class="content-section">
             <h2 class="section-title">Featured In</h2>
