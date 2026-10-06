@@ -1,0 +1,44 @@
+/* Shared identity: SVG avoids platform-specific emoji rendering. */
+#navbar .nav-logo {
+    flex-shrink: 0;
+    white-space: nowrap;
+    text-decoration: none;
+}
+#navbar .nav-logo .mark {
+    display: block;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+}
+#navbar .nav-logo:focus-visible,
+#navbar a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 5px;
+    border-radius: 3px;
+}
+@media (max-width: 560px) {
+    #navbar {
+        padding: 12px 16px;
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+        gap: 12px;
+        align-items: center;
+    }
+    #navbar .nav-logo { font-size: 14px; gap: 6px; }
+    #navbar .nav-logo .mark { width: 20px; height: 20px; flex-basis: 20px; }
+    #navbar .nav-logo .full { display: inline; }
+    #navbar #top-menu { gap: 12px; margin: 0; padding: 0; }
+    #navbar #top-menu li { display: flex; align-items: center; }
+    #navbar a.nav-link { font-size: 12px; padding-block: 12px; }
+    #navbar a.nav-cta { font-size: 12px !important; padding: 9px 11px; white-space: nowrap; }
+    .panel { padding-top: calc(88px + env(safe-area-inset-top)); }
+}
+/* Give very narrow phones a deliberate second navigation row. */
+@media (max-width: 360px) {
+    #navbar { flex-wrap: wrap; row-gap: 4px; }
+    #navbar #top-menu { flex-basis: 100%; justify-content: space-between; }
+    body { padding-top: calc(112px + env(safe-area-inset-top)); }
+    body:has(.panel) { padding-top: 0; }
+    .panel { padding-top: calc(112px + env(safe-area-inset-top)); }
+}

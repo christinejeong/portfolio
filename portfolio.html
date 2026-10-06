@@ -376,6 +376,26 @@
         .reveal.d2 { transition-delay: 0.14s; }
         .reveal.d3 { transition-delay: 0.21s; }
 
+        /* Replay the entrance whenever Projects opens, including return visits.
+           Separate translate from transform so card hover remains responsive. */
+        @keyframes projectEnter {
+            from { opacity: 0; translate: 0 32px; }
+            to   { opacity: 1; translate: 0 0; }
+        }
+        #projects.active .section-head {
+            animation: projectEnter 550ms var(--ease) both;
+        }
+        #projects.active .project-card {
+            animation: projectEnter 650ms var(--ease) both;
+            animation-delay: calc(90ms + var(--entry-index, 0) * 75ms);
+        }
+        #projects .project-card.visible {
+            transition: transform 0.35s var(--ease), border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+            transition-delay: 0s;
+        }
+        #projects .project-card.visible:hover { transform: translateY(-5px); }
+
+
         /* ============================================================
            MODAL
         ============================================================ */
@@ -405,7 +425,6 @@
         }
         @media (max-width: 560px) {
             .projects-grid { grid-template-columns: 1fr; }
-            .nav-logo span.full { display: none; }
             .scribble.lg { display: none; }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -417,14 +436,15 @@
             .hero-lines, .hero-links { opacity: 1 !important; transform: none !important; }
         }
     </style>
+    <link rel="stylesheet" href="portfolio-nav.css">
 </head>
 <body>
     <!-- NAV -->
     <nav id="navbar">
-        <div class="nav-logo" data-nav="home"><span class="mark">✳</span><span class="full">Christine&nbsp;Jeong</span></div>
+        <a class="nav-logo" href="portfolio.html" data-nav="home" aria-label="Christine Jeong — home"><svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M4.9 19.1 19.1 4.9"/></svg><span class="full">Christine&nbsp;Jeong</span></a>
         <ul id="top-menu">
-            <li><a class="nav-link" data-nav="about">About</a></li>
-            <li><a class="nav-link" data-nav="projects">Projects</a></li>
+            <li><a class="nav-link" href="#about" data-nav="about">About</a></li>
+            <li><a class="nav-link" href="#projects" data-nav="projects">Projects</a></li>
             <li><a class="nav-cta" href="mailto:yunseojeong0607@gmail.com">Let's talk</a></li>
         </ul>
     </nav>
@@ -602,6 +622,9 @@
     const Nav = (function () {
         const panels = document.querySelectorAll('.panel');
         const navItems = document.querySelectorAll('[data-nav]');
+        document.querySelectorAll('#projects .project-card').forEach((card, index) => {
+            card.style.setProperty('--entry-index', Math.min(index, 6));
+        });
         function show(name) {
             panels.forEach(p => p.classList.toggle('active', p.dataset.panel === name));
             navItems.forEach(n => { if (n.classList.contains('nav-link')) n.classList.toggle('active', n.dataset.nav === name); });
