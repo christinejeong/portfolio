@@ -301,6 +301,36 @@
         .about-text p strong { color: var(--ink); font-weight: 600; }
         .about-text a { color: var(--ink); border-bottom: 1px solid var(--ink-faint); transition: border-color .25s; }
         .about-text a:hover { border-color: var(--ink); }
+        /* Internship timeline */
+        .experience { width: 100%; margin-top: 72px; padding-top: 34px; border-top: 1px solid var(--ink-faint); }
+        .experience h3 { font-family: var(--font-display); font-size: 1.65rem; font-weight: 600; margin-bottom: 34px; }
+        .experience-timeline { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .experience-item { position: relative; padding: 34px 28px 0 0; border-top: 1px solid var(--ink-faint); }
+        .experience-item:last-child { padding-right: 0; }
+        .experience-item::before { content: ''; position: absolute; top: -7px; left: 0; width: 13px; height: 13px; border: 2px solid var(--ink-soft); border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 2px var(--paper); }
+        .experience-item:first-child::before { background: var(--ink); border-color: var(--ink); }
+        .experience-date { display: block; font-family: var(--font-mono); font-size: .73rem; letter-spacing: .015em; color: var(--ink-soft); margin-bottom: 20px; }
+        .experience-company { display: inline-flex; align-items: center; gap: 12px; border-radius: 8px; }
+        .company-avatar { display: grid; place-items: center; flex-shrink: 0; width: 46px; height: 46px; border: 1px solid var(--ink-faint); border-radius: 12px; background: var(--card); font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; transition: background .2s, color .2s; }
+        .company-avatar { overflow: hidden; background: #fff; }
+        .company-avatar img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+        .experience-company h4 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+        .company-arrow { display: inline-block; font-size: .95rem; color: var(--ink-soft); transition: transform .2s; }
+        .experience-company:hover .company-avatar { border-color: var(--ink); }
+        .experience-company:hover .company-arrow { transform: translate(2px, -2px); }
+        .experience-company:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
+        .experience-role { font-size: .87rem; line-height: 1.5; font-weight: 600; margin: 18px 0 12px; }
+        .experience-description { color: var(--ink-soft); font-size: .88rem; line-height: 1.75; }
+        @media (max-width: 760px) {
+            .experience { margin-top: 46px; padding-top: 28px; }
+            .experience-timeline { grid-template-columns: 1fr; }
+            .experience-item, .experience-item:last-child { border-top: 0; border-left: 1px solid var(--ink-faint); padding: 0 0 34px 28px; margin-left: 6px; }
+            .experience-item:last-child { padding-bottom: 0; }
+            .experience-item::before { top: 2px; left: -7px; }
+            .experience-date { margin-bottom: 14px; }
+            .experience-role { margin-top: 14px; }
+        }
+
         .chips { display: flex; flex-wrap: wrap; gap: 9px; margin: 20px 0 24px; }
         .chip {
             font-size: 0.82rem; padding: 6px 14px; border-radius: 100px;
@@ -540,6 +570,38 @@
                     Email (Personal): <a href="mailto:yunseojeong0607@gmail.com">yunseojeong0607@gmail.com</a></p>
                 </div>
             </div>
+            <section class="experience reveal" aria-labelledby="experience-heading">
+                <h3 id="experience-heading">Past experience.</h3>
+                <ol class="experience-timeline">
+                    <li class="experience-item">
+                        <span class="experience-date">June – August 2026</span>
+                        <a class="experience-company" href="https://rebellions.ai/" target="_blank" rel="noopener noreferrer" aria-label="Visit Rebellions website (opens in a new tab)">
+                            <span class="company-avatar" aria-hidden="true"><img src="img/rebellions-avatar.png" alt="" width="46" height="46"></span>
+                            <h4>Rebellions <span class="company-arrow" aria-hidden="true">↗</span></h4>
+                        </a>
+                        <p class="experience-role">Forward Deployed Engineer Intern</p>
+                        <p class="experience-description">Developed an agentic AI application powered by a 519-billion-parameter language model, supporting 30 concurrent users with five-second latency. Built a reusable design system that accelerated AI demo development by 3× and created an AI-powered analytics dashboard that reduced users’ time to insight by 7%.</p>
+                    </li>
+                    <li class="experience-item">
+                        <span class="experience-date">June – August 2025</span>
+                        <a class="experience-company" href="https://www.cochl.ai/" target="_blank" rel="noopener noreferrer" aria-label="Visit Cochl Inc. website (opens in a new tab)">
+                            <span class="company-avatar" aria-hidden="true"><img src="img/cochl-avatar.png" alt="" width="46" height="46"></span>
+                            <h4>Cochl Inc. <span class="company-arrow" aria-hidden="true">↗</span></h4>
+                        </a>
+                        <p class="experience-role">Software Engineer Intern</p>
+                        <p class="experience-description">Developed and optimized a C++ sound-recognition SDK, reducing CPU usage by 8% and improving the processing of over 150 sound categories. Tested software reliability across embedded devices and designed an AI-powered sound-recognition interface for AirPods, contributing to the company’s exploration of consumer-facing products.</p>
+                    </li>
+                    <li class="experience-item">
+                        <span class="experience-date">June 2024</span>
+                        <a class="experience-company" href="https://www.cksystems.co.kr/" target="_blank" rel="noopener noreferrer" aria-label="Visit CK Systems website (opens in a new tab)">
+                            <span class="company-avatar" aria-hidden="true"><img src="img/cksystems-avatar.png" alt="" width="46" height="46"></span>
+                            <h4>CK Systems <span class="company-arrow" aria-hidden="true">↗</span></h4>
+                        </a>
+                        <p class="experience-role">System Engineer Intern</p>
+                        <p class="experience-description">Configured and tested cybersecurity software across more than 20 virtual environments, identifying issues before deployment and reducing errors by 6%. Developed testing procedures and user documentation that helped reduce client setup time by 8%.</p>
+                    </li>
+                </ol>
+            </section>
         </div>
     </section>
 
